@@ -3,41 +3,34 @@
 
 class <?php  echo $helper_name?> extends AkActionViewHelper
 { 
-    public function cancel_link($url = array('action' => 'listing'))
-    {
+    public function cancel_link($url = array('action' => 'listing')) {
         return $this->_controller->url_helper->link_to($this->t('Cancel'), $url, array('class'=>'action'));
     }
 
-    public function save_button()
-    {
+    public function save_button() {
         return '<input type="submit" value="'.$this->_controller->t('Save').'" class="primary" />';
     }
 
-    public function confirm_delete()
-    {
+    public function confirm_delete() {
         return '<input type="submit" value="'.$this->_controller->t('Delete').'" />';
     }
 
-    public function link_to_show(&$Record)
-    {
+    public function link_to_show(&$Record) {
         if(User::can('show action', 'Admin::<?php  echo $controller_name?>')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Show'), array('action' => 'show', 'id' => $Record->getId()), array('class'=>'action'));
         }
     }
     
-    public function link_to_edit(&$Record)
-    {
+    public function link_to_edit(&$Record) {
         if(User::can('edit action', 'Admin::<?php  echo $controller_name?>')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Edit'), array('action' => 'edit', 'id' => $Record->getId()), array('class'=>'action'));
         }
     }
     
-    public function link_to_destroy(&$Record)
-    {
+    public function link_to_destroy(&$Record) {
         if(User::can('destroy action', 'Admin::<?php  echo $controller_name?>')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Delete'), array('action' => 'destroy', 'id' => $Record->getId()), array('class'=>'action'));
         }
     }
 }
 
-?>

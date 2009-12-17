@@ -7,11 +7,9 @@ class Permission extends ActiveRecord
         'roles'
         );
 
-    public function validate()
-    {
+    public function validate() {
         $this->validatesUniquenessOf('name', array('scope' => 'extension_id'));
     }
     
 }
 
-?>

@@ -8,8 +8,7 @@ class Role extends ActiveRecord
     );
     public $acts_as = 'nested_set';
 
-    public function validate()
-    {
+    public function validate() {
         $this->validatesPresenceOf('name');
         $this->validatesUniquenessOf('name'); // for hierarchical rbac add: array('scope'=>'parent_id')
         if($this->nested_set->isRoot() && empty($this->is_enabled)){
@@ -18,8 +17,7 @@ class Role extends ActiveRecord
         }
     }
 
-    public function &createUnder($Parent, $Child)
-    {
+    public function &createUnder($Parent, $Child) {
         if(is_string($Child)){
             $Child = new Role(is_array($Child) ? $Child : array('name' => $Child));
         }
@@ -27,12 +25,11 @@ class Role extends ActiveRecord
         return $Child;
     }
     
-    public function addUnder($Parent)
-    {
+    public function addUnder($Parent) {
         $this->transactionStart();
         $is_new_record = $this->isNewRecord();
         if(is_string($Parent)){
-            $Parent =& $this->findFirstBy('name', $Parent);
+            $Parent = $this->findFirstBy('name', $Parent);
         }
         if($Parent && (!$this->isNewRecord() || $this->save())){
             $Parent->nested_set->addChild($this);
@@ -46,17 +43,15 @@ class Role extends ActiveRecord
         $this->transactionComplete();
     }
 
-    public function &addChildrenRole($Children)
-    {
+    public function &addChildrenRole($Children) {
         return $this->createUnder($this, $Children);
     }
 
-    public function addPermission($Permission)
-    {
+    public function addPermission($Permission) {
         if(!is_object($Permission)){
             $PermissionInstance = new Permission();
             if(!is_array($Permission)){
-                $Permission =& $PermissionInstance->findOrCreateBy('name', $Permission);
+                $Permission = $PermissionInstance->findOrCreateBy('name', $Permission);
             }else{
                 if(isset($Permission['extension']) && is_object($Permission['extension'])){
                     $Permission['extension_id'] = $Permission['extension']->getId();
@@ -65,14 +60,13 @@ class Role extends ActiveRecord
 
                 $args = array(join(' AND ', array_keys($Permission)).' ');
                 $args = array_merge($args, $Permission);
-                $Permission = call_user_func_array(array(&$PermissionInstance, 'findOrCreateBy'), $args);
+                $Permission = call_user_func_array(array($PermissionInstance, 'findOrCreateBy'), $args);
             }
         }
         return $this->permission->add($Permission);
     }
 
-    public function &getPermissions()
-    {
+    public function &getPermissions() {
         $this->permission->load();
         $Permissions = empty($this->permissions) ? array() : $this->permissions;
         $ChildrenRoles = $this->nested_set->getChildren();
@@ -83,7 +77,5 @@ class Role extends ActiveRecord
         }
         return $Permissions;
     }
-
 }
 
-?>

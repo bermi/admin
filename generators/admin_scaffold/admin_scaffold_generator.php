@@ -26,13 +26,9 @@ class AdminScaffoldGenerator extends  ScaffoldGenerator
     //var $module_preffix = 'admin';
     public $generators_dir = AK_ADMIN_PLUGIN_GENERATORS_DIR;
 
-    public function cast()
-    {
+    public function cast() {
         $this->controller_name = 'Admin::'.(empty($this->controller_name) ? $this->model_name : (AkInflector::camelize($this->controller_name)));
         return parent::cast();
     }
 }
 
-
-
-?>

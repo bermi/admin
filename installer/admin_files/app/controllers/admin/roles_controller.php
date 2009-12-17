@@ -11,33 +11,29 @@ class Admin_RolesController extends AdminController
     public $admin_selected_tab = 'Manage Users';
     public $controller_selected_tab = 'Roles';
 
-    public function index()
-    {
+    public function index() {
         $this->redirectToAction('listing');
     }
 
-    public function listing()
-    {
+    public function listing() {
         $this->_loadCurrentUserRoles();
     }
 
-    public function add()
-    {
+    public function add() {
         $this->_loadCurrentUserRoles();
 
-        if(empty($this->Roles) || !isset($this->CurrentUser->roles[0]) || !$Root =& $this->CurrentUser->roles[0]){
+        if(empty($this->Roles) || !isset($this->CurrentUser->roles[0]) || !$Root = $this->CurrentUser->roles[0]){
             $this->flash['notice'] = $this->t('Can not create a Role. Parent Role not found.');
             $this->redirectToAction('listing');
         }
 
         if($this->Request->isPost() && !empty($this->params['role'])){
-            $this->role =& $Root->addChildrenRole($this->params['role']['name']);
+            $this->role = $Root->addChildrenRole($this->params['role']['name']);
             $this->_addOrEditRole('add');
         }
     }
 
-    public function edit()
-    {
+    public function edit() {
         if (empty($this->params['id'])){
             $this->redirectToAction('listing');
         }
@@ -48,8 +44,7 @@ class Admin_RolesController extends AdminController
     }
     
 
-    public function destroy()
-    {
+    public function destroy() {
         if(!empty($this->params['id'])){
             if($this->role = $this->role->find($this->params['id'])){
                 if($this->Request->isPost()){
@@ -65,8 +60,7 @@ class Admin_RolesController extends AdminController
         }
     }
 
-    public function _addOrEditRole($action)
-    {
+    public function _addOrEditRole($action) {
         $this->role->setAttributes(Ak::pick('name,description,is_enabled', $this->params['role']));
         if ($this->role->save()){
             $this->flash_options = array('seconds_to_close' => 10);
@@ -74,7 +68,6 @@ class Admin_RolesController extends AdminController
             $this->redirectToAction('listing');
         }
     }
-
 }
 
-?>
+

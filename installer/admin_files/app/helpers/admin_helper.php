@@ -2,34 +2,29 @@
 
 class AdminHelper extends AkActionViewHelper
 {
-    public function admin_menu()
-    {
+    public function admin_menu() {
         return $this->_render_menu('admin');
     }
 
-    public function can($task, $extension = null, $force_reload = false)
-    {
+    public function can($task, $extension = null, $force_reload = false) {
         return User::can($task, $extension, $force_reload);
     }
 
-    public function controller_menu()
-    {
+    public function controller_menu() {
         return $this->_render_menu('controller');
     }
 
-    public function user_menu()
-    {
-        $controller =& $this->_controller;
+    public function user_menu() {
+        $controller = $this->_controller;
         if(!empty($controller->CurrentUser)){
             $logout_url = @$controller->admin_settings['logout_url'];
-            $User =& $controller->CurrentUser;
+            $User = $controller->CurrentUser;
             return $this->t('logged in as <strong>%user_name</strong>', array('%user_name' => $User->login)).
             (empty($logout_url)?'':' – '.$controller->url_helper->link_to($this->t('logout'), $logout_url));
         }
     }
 
-    public function _getMenuOptions($type = 'admin')
-    {
+    public function _getMenuOptions($type = 'admin') {
         if($type == 'admin'){
             return array_merge($this->_getDefaultOptions($type), (!empty($this->_controller->{"{$type}_menu_options"}) ?$this->_controller->{"{$type}_menu_options"} : array()));
         }else{
@@ -38,8 +33,7 @@ class AdminHelper extends AkActionViewHelper
 
     }
 
-    public function _getDefaultOptions($type = 'admin')
-    {
+    public function _getDefaultOptions($type = 'admin') {
         if(!empty($this->_controller->{"default_{$type}_menu_options"})){
             return $this->_controller->{"default_{$type}_menu_options"};
         }elseif (!empty($this->_controller->{"_{$type}_menu_options"})){
@@ -51,14 +45,12 @@ class AdminHelper extends AkActionViewHelper
         }
     }
 
-    public function _getMenuOptionsFile($type = 'admin')
-    {
+    public function _getMenuOptionsFile($type = 'admin') {
         return ltrim($this->_controller->getModuleName()."_{$type}_menu.yml", '/');
     }
     //
 
-    public function _getMenuOptionsForControllersInModule($type = 'admin')
-    {
+    public function _getMenuOptionsForControllersInModule($type = 'admin') {
         $controllers = (Ak::dir(AK_CONTROLLERS_DIR.DS.$this->_controller->getModuleName(), array('dirs'=>false)));
         sort($controllers);
         $menu_options = array();
@@ -73,9 +65,8 @@ class AdminHelper extends AkActionViewHelper
         return $menu_options;
     }
 
-    public function _render_menu($type)
-    {
-        $controller =& $this->_controller;
+    public function _render_menu($type) {
+        $controller = $this->_controller;
         $current_controller = AkInflector::urlize($controller->getControllerName());
         $current_action = !empty($controller->params['action'])?$controller->params['action']:'';
         $menu_options = $this->_getMenuOptions($type);
@@ -131,4 +122,3 @@ class AdminHelper extends AkActionViewHelper
     }
 }
 
-?>

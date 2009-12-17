@@ -22,42 +22,35 @@ class <?php echo "Admin_".AkInflector::camelize($controller_name)."Controller" ?
     
 ?>
    
-    public function index()
-    {
+    public function index() {
         $this->redirectToAction('listing');
     }
 
 <?php  foreach((array)@$actions as $action) :?>
-    public function <?php echo $action?>()
-    {
+    public function <?php echo $action?>() {
     }
 
 <?php  endforeach; ?>
-    public function listing()
-    {
+    public function listing() {
         $this-><?php echo $singular_name?>_pages = $this->pagination_helper->getPaginator($this-><?php echo $model_name?>, array('items_per_page' => 10));
         $options = $this->pagination_helper->getFindOptions($this-><?php echo $model_name?>);
-        $this-><?php echo $CamelCasePlural?> =& $this-><?php echo $model_name?>->find('all', $options);
+        $this-><?php echo $CamelCasePlural?> = $this-><?php echo $model_name?>->find('all', $options);
     }
 
-    public function show()
-    {
+    public function show() {
         $this->_find<?php echo $model_name?>OrRedirect();
     }
 
-    public function add()
-    {
+    public function add() {
         $this->_addOrEdit<?php echo $model_name?>('add');
     }
 
-    public function edit()
-    {
+    public function edit() {
         $this->_find<?php echo $model_name?>OrRedirect();
         $this->_addOrEdit<?php echo $model_name?>('edit');
     }
 
-    public function destroy()
-    {
+    public function destroy() {
         $this->_find<?php echo $model_name?>OrRedirect();
         if($this->Request->isPost()){
             $this-><?php echo $CamelCaseSingular?>->destroy();
@@ -67,17 +60,15 @@ class <?php echo "Admin_".AkInflector::camelize($controller_name)."Controller" ?
         }
     }
     
-    public function _find<?php echo $model_name?>OrRedirect()
-    {
+    public function _find<?php echo $model_name?>OrRedirect() {
         if( empty($this->params['id']) || 
-            !($this-><?php echo $CamelCaseSingular?> =& $this-><?php echo $model_name?>->find(@$this->params['id']))){
+            !($this-><?php echo $CamelCaseSingular?> = $this-><?php echo $model_name?>->find(@$this->params['id']))){
             $this->flash['error'] = $this->t('<?php echo AkInflector::titleize($singular_name)?> not found.');
             $this->redirectToAction('listing');
         }
     }
         
-    public function _addOrEdit<?php echo $model_name?>($add_or_edit)
-    {
+    public function _addOrEdit<?php echo $model_name?>($add_or_edit) {
         $is_add = $add_or_edit != 'edit';
         if(!empty($this->params['<?php echo $CamelCaseSingular?>'])){
             if($is_add){
@@ -93,4 +84,3 @@ class <?php echo "Admin_".AkInflector::camelize($controller_name)."Controller" ?
     }
 }
 
-?>

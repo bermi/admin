@@ -11,41 +11,36 @@ class Admin_UsersController extends AdminController
     );
     public $controller_selected_tab = 'Accounts';
 
-    public function index()
-    {
+    public function index() {
         $this->redirectToAction('listing');
     }
 
-    public function listing()
-    {
+    public function listing() {
         $this->user_pages = $this->pagination_helper->getPaginator($this->User, array('items_per_page' => 50));
         $finder_options = $this->pagination_helper->getFindOptions($this->User);
         empty($finder_options['order']) ? $finder_options['order'] = 'created_at DESC' : null;
 
-        if (!$this->Users =& $this->User->find('all', $finder_options)){
+        if (!$this->Users = $this->User->find('all', $finder_options)){
             $this->flash_options = array('seconds_to_close' => 10);
             $this->flash['notice'] = $this->t('It seems like you don\'t have Users on your site. Please fill in the form below in order to create your first user.');
             $this->redirectTo(array('action' => 'add'));
         }
     }
 
-    public function show()
-    {
+    public function show() {
         if (!$this->User){
             $this->flash['error'] = $this->t('User not found.');
             $this->redirectTo(array('action' => 'listing'));
         }
     }
 
-    public function add()
-    {
+    public function add() {
         !empty($this->params['id']) ? $this->redirectTo(array('action' => 'add', 'id' => NULL)) : null;
         $this->_loadCurrentUserRoles();
         $this->_addOrEdit();
     }
 
-    public function edit()
-    {
+    public function edit() {
         if (empty($this->params['id']) || empty($this->User->id)){
             $this->flash['error'] = $this->t('Invalid user or not found.');
             $this->redirectTo(array('action' => 'listing'));
@@ -58,8 +53,7 @@ class Admin_UsersController extends AdminController
         $this->_addOrEdit();
     }
 
-    public function destroy()
-    {
+    public function destroy() {
         if (empty($this->params['id']) || empty($this->User->id)){
             $this->flash['notice'] = $this->t('Invalid user or not found.');
             $this->redirectTo(array('action' => 'listing'));
@@ -79,8 +73,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    public function _addOrEdit()
-    {
+    public function _addOrEdit() {
         $this->_protectUserFromBeingModified();
         if ($this->Request->isPost() && !empty($this->params['user'])){
             $this->User->setAttributes($this->params['user']);
@@ -93,7 +86,7 @@ class Admin_UsersController extends AdminController
                     if(!empty($posted_roles)){
                         $role_ids = array_intersect(array_keys($posted_roles),
                         array_keys($this->User->collect($this->Roles,'id','id')));
-                        $User =& $this->User->find($this->User->id, array('include'=>'roles'));
+                        $User = $this->User->find($this->User->id, array('include'=>'roles'));
                         $User->role->setByIds($role_ids);
                     }
                 }
@@ -106,8 +99,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    public function _protectUserFromBeingModified()
-    {
+    public function _protectUserFromBeingModified() {
         $self_editing = $this->User->getId() == $this->CurrentUser->getId();
         if($this->User->isNewRecord()){
             return ;
@@ -121,4 +113,3 @@ class Admin_UsersController extends AdminController
     }
 }
 
-?>

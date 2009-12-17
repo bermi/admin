@@ -4,22 +4,18 @@ class AccountController extends ApplicationController
 {
     public $models = array('User','Sentinel');
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->settings = Ak::getSettings('admin');
     }
 
-    public function index()
-    {
+    public function index() {
         $this->redirectToAction('sign_in');
     }
 
-    public function sign_in()
-    {
+    public function sign_in() {
     }
 
-    public function sign_up()
-    {
+    public function sign_up() {
         if ($this->Request->isPost() && !empty($this->params['user'])){
             if($this->User->signUp($this->params['user'])){
                 $this->flash_options = array('seconds_to_close' => 10);
@@ -29,8 +25,7 @@ class AccountController extends ApplicationController
         }
     }
 
-    public function is_login_available()
-    {
+    public function is_login_available() {
         if(!empty($this->params['login'])){
             $this->User->set('login', $this->params['login']);
             $this->User->validatesUniquenessOf('login');
@@ -42,14 +37,12 @@ class AccountController extends ApplicationController
         $this->renderText('1');
     }
 
-    public function logout()
-    {
+    public function logout() {
         $this->flash['message'] = $this->t("You have successfully logged out.");
         $this->_perform_logout();
     }
 
-    public function _perform_logout($redirect = true)
-    {
+    public function _perform_logout($redirect = true) {
         $this->Sentinel->init($this);
         $this->Sentinel->unsetCurrentUser();
         if($redirect){
@@ -58,8 +51,7 @@ class AccountController extends ApplicationController
         }
     }
 
-    public function password_reminder()
-    {
+    public function password_reminder() {
         if($this->Request->isPost()){
             $this->Sentinel->init($this);
             if($User = $this->User->findFirstBy('email', @$this->params['email'])){
@@ -75,8 +67,7 @@ class AccountController extends ApplicationController
 
     }
 
-    public function reset_password()
-    {
+    public function reset_password() {
         if($this->User = $this->Sentinel->authenticateWithToken(@$this->params['token'])){
             $this->token = $this->User->getToken(array('expires' => true, 'single_use' => true));
             if($this->Request->isPost()){

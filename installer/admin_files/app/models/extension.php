@@ -6,24 +6,20 @@ class Extension extends ActiveRecord
 {
     public $has_many = array('permissions');
 
-    public function validate()
-    {
+    public function validate() {
         $this->validatesUniquenessOf('name');
         $this->validatesPresenceOf('name');
     }
 
-    public function enable()
-    {
+    public function enable() {
         return $this->_enableOrDisable('enable');
     }
 
-    public function disable()
-    {
+    public function disable() {
         return $this->_enableOrDisable('disable');
     }
 
-    public function _enableOrDisable($enable = 'enable')
-    {
+    public function _enableOrDisable($enable = 'enable') {
         $enable = $enable == 'enable' || $enable === true;
         if($enable != $this->get('is_enabled')){
             $this->set('is_enabled', $enable);
@@ -33,32 +29,28 @@ class Extension extends ActiveRecord
         return false;
     }
 
-    public function getExtensionsBasePath()
-    {
+    public function getExtensionsBasePath() {
         return AK_EXTENSION_DIR;
     }
 
-    public function getExtensionPath()
-    {
+    public function getExtensionPath() {
         $path = $this->getExtensionsBasePath().DS.$this->get('name');
         return is_dir($path) ? $path : false;
     }
 
-    public function getInstallerPath()
-    {
+    public function getInstallerPath() {
         $path = ($dir = $this->getExtensionPath()) ? $dir.DS.'installer.php' : false;
         return $path && file_exists($path) ? $path : false;
     }
 
-    public function _installOrUninstallExtension($action = 'install')
-    {
+    public function _installOrUninstallExtension($action = 'install') {
         if($installer_path = $this->getInstallerPath()){
             include_once($installer_path);
             $installer_class_name = AkInflector::camelize($this->get('name')).'ExtensionInstaller';
             if(class_exists($installer_class_name)){
                 $Installer = new $installer_class_name();
                 if(method_exists($Installer, $action)){
-                    $Installer->Extension =& $this;
+                    $Installer->Extension = $this;
                     return $Installer->$action();
                 }
             }
@@ -68,4 +60,4 @@ class Extension extends ActiveRecord
 
 }
 
-?>
+

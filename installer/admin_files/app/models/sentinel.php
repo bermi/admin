@@ -9,14 +9,12 @@ class Sentinel
     public $CurrentUser;
     public $Session;
 
-    public function init(&$Controller)
-    {
-        $this->Controller =& $Controller;
-        $this->Session =& $this->Controller->Request->getSession();
+    public function init(&$Controller) {
+        $this->Controller = $Controller;
+        $this->Session = $this->Controller->Request->getSession();
     }
 
-    public function authenticate()
-    {
+    public function authenticate() {
         $this->saveOriginalRequest();
         if(!$User = $this->getUserFromSession()){
             if($User = $this->getAuthenticatedUser()){
@@ -30,13 +28,11 @@ class Sentinel
         return $User;
     }
 
-    public function getAuthenticatedUser()
-    {
+    public function getAuthenticatedUser() {
         return $this->{$this->getAuthenticationMethod()}();
     }
 
-    public function getAuthenticationMethod()
-    {
+    public function getAuthenticationMethod() {
         if(!empty($this->Controller->params['ak_login']) || $this->shouldDefaultToPostAuthentication()){
             return 'authenticateUsingPostedVars';
         }
@@ -44,8 +40,7 @@ class Sentinel
         return 'authenticateUsingHttpBasic';
     }
 
-    public function authenticateUsingPostedVars()
-    {
+    public function authenticateUsingPostedVars() {
         $UserInstance = new User();
         $login = @$this->Controller->params['ak_login'];
         $result =  $UserInstance->authenticate(@$login['login'], @$login['password']);
@@ -58,8 +53,7 @@ class Sentinel
         return $result;
     }
 
-    public function authenticateWithToken($token)
-    {
+    public function authenticateWithToken($token) {
         $options = User::_decodeToken($token);
         
         if(!empty($options) && !empty($options['hash']) && !empty($options['id'])){
@@ -79,15 +73,13 @@ class Sentinel
     }
 
 
-    public function saveOriginalRequest($force = false)
-    {
+    public function saveOriginalRequest($force = false) {
         if(empty($this->Session['__OriginalRequest']) || $force){
             $this->Session['__OriginalRequest'] = serialize($this->Controller->Request);
         }
     }
 
-    public function restoreOriginalRequest()
-    {
+    public function restoreOriginalRequest() {
         if(!empty($this->Session['__OriginalRequest'])){
             $this->Controller->Request = unserialize($this->Session['__OriginalRequest']);
             $this->Controller->params = $this->Controller->Request->getParams();
@@ -95,25 +87,21 @@ class Sentinel
         }
     }
 
-    public function redirectToSignInScreen()
-    {
+    public function redirectToSignInScreen() {
         $settings = Ak::getSettings('admin');
         $this->Controller->redirectTo($settings['sign_in_url']);
     }
 
-    public function authenticateUsingHttpBasic()
-    {
+    public function authenticateUsingHttpBasic() {
         $settings = Ak::getSettings('admin');
         return $this->Controller->_authenticateOrRequestWithHttpBasic(Ak::t($settings['http_auth_realm'], null, 'account'), new User());
     }
 
-    public function hasUserOnSession()
-    {
+    public function hasUserOnSession() {
         return !empty($this->Session['__current_user_id']);
     }
 
-    public function getUserFromSession()
-    {
+    public function getUserFromSession() {
         if ($this->hasUserOnSession()) {
             $model = isset($this->Session['__CurrentUserType'])?$this->Session['__CurrentUserType']:'User';
             Ak::import($model);
@@ -123,8 +111,7 @@ class Sentinel
         return false;
     }
 
-    public function setCurrentUserOnSession($User, $force = false)
-    {
+    public function setCurrentUserOnSession($User, $force = false) {
         if(!$this->hasUserOnSession() || $force){
             $this->Session['__current_user_id'] = $User->getId();
             $this->Session['__CurrentUserType'] = get_class($User);
@@ -132,47 +119,40 @@ class Sentinel
 
     }
 
-    public function removeCurrentUserFromSession()
-    {
+    public function removeCurrentUserFromSession() {
         if($this->hasUserOnSession()){
             $this->Session['__CurrentUserType'] = null;
             $this->Session['__current_user_id'] = null;
         }
     }
 
-    public function setCurrentUserOnController($User)
-    {
-        $this->Controller->CurrentUser =& $User;
+    public function setCurrentUserOnController($User) {
+        $this->Controller->CurrentUser = $User;
     }
 
-    public function removeCurrentUserFromController()
-    {
+    public function removeCurrentUserFromController() {
         $this->Controller->CurrentUser = null;
     }
 
-    public function getCurrentUser()
-    {
+    public function getCurrentUser() {
         return $this->CurrentUser;
     }
 
-    public function setCurrentUser(&$User)
-    {
-        $this->CurrentUser =& $User;
+    public function setCurrentUser(&$User) {
+        $this->CurrentUser = $User;
         $this->setCurrentUserOnController($User);
         $this->setCurrentUserOnSession($User);
         User::setCurrentUser($User);
     }
 
-    public function unsetCurrentUser()
-    {
+    public function unsetCurrentUser() {
         $this->CurrentUser = null;
         $this->removeCurrentUserFromController();
         $this->removeCurrentUserFromSession();
         User::unsetCurrentUser();
     }
 
-    public function shouldDefaultToPostAuthentication()
-    {
+    public function shouldDefaultToPostAuthentication() {
         $settings = Ak::getSettings('admin');
         if(!empty($settings['default_authentication_method']) &&
         $settings['default_authentication_method'] == 'post'){
@@ -180,14 +160,12 @@ class Sentinel
         }
     }
 
-    public function isWebBrowser()
-    {
+    public function isWebBrowser() {
         return preg_match('/Mozilla|MSIE|Gecko|Opera/i',@$this->Controller->Request->env['HTTP_USER_AGENT']);
     }
 
 
-    public function getCredentialsRenewalUrl($User)
-    {
+    public function getCredentialsRenewalUrl($User) {
         if($User){
             return $this->Controller->urlFor(array(
             'controller' => 'account',
@@ -199,8 +177,7 @@ class Sentinel
         return false;
     }
 
-    public function sendPasswordReminder($User)
-    {
+    public function sendPasswordReminder($User) {
         if($password_reset_url = $this->getCredentialsRenewalUrl($User)){
             Ak::import_mailer('account_mailer');
             $Mailer = new AccountMailer();
@@ -213,4 +190,3 @@ class Sentinel
 
 }
 
-?>

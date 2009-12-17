@@ -10,24 +10,21 @@ class Admin_PermissionsController extends AdminController
 
     public $admin_selected_tab = 'Manage Users';
 
-    public function index()
-    {
+    public function index() {
         $this->redirectToAction('manage');
     }
 
-    public function manage()
-    {
+    public function manage() {
         if($this->Request->isPost()){
             $this->_updatePermissions();
         }
-        $this->Roles =& $this->Role->findAllBy('name:<>', 'Application owner');
-        $this->Extensions =& $this->Extension->find('all', array('include'=>array('permissions' => array('order'=> 'name ASC'))));
+        $this->Roles = $this->Role->findAllBy('name:<>', 'Application owner');
+        $this->Extensions = $this->Extension->find('all', array('include'=>array('permissions' => array('order'=> 'name ASC'))));
     }
 
-    public function destroy()
-    {
+    public function destroy() {
         if(!empty($this->params['id'])){
-            if($this->Permission =& $this->Permission->find($this->params['id'], array('include' => 'extension'))){
+            if($this->Permission = $this->Permission->find($this->params['id'], array('include' => 'extension'))){
                 if($this->Request->isPost()){
                     if($this->Permission->destroy()){
                         $this->flash_options = array('seconds_to_close' => 10);
@@ -45,21 +42,18 @@ class Admin_PermissionsController extends AdminController
         }
     }
 
-    public function _updatePermissions()
-    {
+    public function _updatePermissions() {
         foreach ($this->params['permissions'] as $permission_id=>$roles) {
             $role_ids = array_keys(array_diff($roles, array('')));
-            $Permission =& $this->Permission->find($permission_id, array('include'=>'roles'));
+            $Permission = $this->Permission->find($permission_id, array('include'=>'roles'));
             $Permission->role->deleteAll();
             $Permission->role->setByIds($role_ids);
         }
     }
 
-    public function _loadPermissionsAndExtensions()
-    {
-        $this->Permissions =& $this->role->getPermissions();
-        $this->Extensions =& $this->Extension->find('all', array('include'=>'permissions', 'sort'=>'__owner.name ASC, _permissions.name ASC'));
+    public function _loadPermissionsAndExtensions() {
+        $this->Permissions = $this->role->getPermissions();
+        $this->Extensions = $this->Extension->find('all', array('include'=>'permissions', 'sort'=>'__owner.name ASC, _permissions.name ASC'));
     }
 }
 
-?>

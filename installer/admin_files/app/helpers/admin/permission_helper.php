@@ -2,8 +2,7 @@
 
 class PermissionHelper extends AkActionViewHelper
 {
-    public function permission_check_box(&$Permission, &$Extenssion, &$Role)
-    {
+    public function permission_check_box(&$Permission, &$Extenssion, &$Role) {
         $options = array(
         'id' => 'permissions_'.$Permission->getId().'_'.$Role->getId(),
         'name' => 'permissions['.$Permission->getId().']['.$Role->getId().']',
@@ -22,22 +21,18 @@ class PermissionHelper extends AkActionViewHelper
         'value' => 0)).TagHelper::tag('input', $options);
     }
 
-    public function link_to_destroy(&$record)
-    {
+    public function link_to_destroy(&$record) {
         if(AK_DEV_MODE && User::can('destroy action', 'Admin::Permissions')){
             return $this->_controller->url_helper->link_to($this->_controller->t('delete'), array('action' => 'destroy', 'id' => $record->getId()), array('class'=>'seccondary'));
         }
     }
 
-    public function confirm_delete()
-    {
+    public function confirm_delete() {
         return '<input type="submit" value="'.$this->_controller->t('Delete').'" />';
     }
 
-    public function save_button()
-    {
+    public function save_button() {
         return '<input type="submit" value="'.$this->_controller->t('Update permissions').'" class="primary" />';
-    }
-    
+    }    
 }
-?>
+

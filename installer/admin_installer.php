@@ -4,8 +4,7 @@ define('AK_ADMIN_PLUGIN_FILES_DIR', AK_APP_PLUGINS_DIR.DS.'admin'.DS.'installer'
 
 class AdminInstaller extends AkInstaller
 {
-    public function up_1()
-    {
+    public function up_1() {
         $this->files = Ak::dir(AK_ADMIN_PLUGIN_FILES_DIR, array('recurse'=> true));
         empty($this->options['force']) ? $this->checkForCollisions($this->files) : null;
         $this->copyAdminFiles();
@@ -16,8 +15,7 @@ class AdminInstaller extends AkInstaller
         echo "\n\nInstallation completed\n";
     }
 
-    public function down_1()
-    {
+    public function down_1() {
         include_once(AK_APP_INSTALLERS_DIR.DS.'admin_plugin_installer.php');
         $Installer = new AdminPluginInstaller();
 
@@ -26,8 +24,7 @@ class AdminInstaller extends AkInstaller
     }
 
 
-    public function checkForCollisions(&$directory_structure, $base_path = AK_ADMIN_PLUGIN_FILES_DIR)
-    {
+    public function checkForCollisions(&$directory_structure, $base_path = AK_ADMIN_PLUGIN_FILES_DIR) {
         foreach ($directory_structure as $k=>$node){
             if(!empty($this->skip_all)){
                 return ;
@@ -61,29 +58,25 @@ class AdminInstaller extends AkInstaller
         }
     }
 
-    public function copyAdminFiles()
-    {
+    public function copyAdminFiles() {
         $this->_copyFiles($this->files);
     }
 
-    public function modifyRoutes()
-    {
+    public function modifyRoutes() {
         $preffix = '/'.trim($this->promptUserVar('Admin url preffix',  array('default'=>'/admin/')), "\t /").'/';
         $path = AK_CONFIG_DIR.DS.'routes.php';
         Ak::file_put_contents($path, str_replace('<?php',"<?php \n\n \$Map->connect('$preffix:controller/:action/:id', array('controller' => 'dashboard', 'action' => 'index', 'module' => 'admin'));",Ak::file_get_contents($path)));
 
     }
 
-    public function runMigration()
-    {
+    public function runMigration() {
         include_once(AK_APP_INSTALLERS_DIR.DS.'admin_plugin_installer.php');
         $Installer = new AdminPluginInstaller();
 
         echo "Running the admin plugin migration\n";
         $Installer->install();
     }
-    public function relativizeStylesheetPaths()
-    {
+    public function relativizeStylesheetPaths() {
         $url_suffix = AkInstaller::promptUserVar(
         'The admin plugin comes with some fancy CSS background images.
 
@@ -105,8 +98,7 @@ so you don\'t need to manually edit the CSS files', array('default'=>'/'));
         }
     }
 
-    public function _copyFiles($directory_structure, $base_path = AK_ADMIN_PLUGIN_FILES_DIR)
-    {
+    public function _copyFiles($directory_structure, $base_path = AK_ADMIN_PLUGIN_FILES_DIR) {
         foreach ($directory_structure as $k=>$node){
             $path = $base_path.DS.$node;
             if(is_dir($path)){
@@ -128,16 +120,14 @@ so you don\'t need to manually edit the CSS files', array('default'=>'/'));
         }
     }
 
-    public function _makeDir($path)
-    {
+    public function _makeDir($path) {
         $dir = str_replace(AK_ADMIN_PLUGIN_FILES_DIR, AK_BASE_DIR,$path);
         if(!is_dir($dir)){
             mkdir($dir);
         }
     }
 
-    public function _copyFile($path)
-    {
+    public function _copyFile($path) {
         $destination_file = str_replace(AK_ADMIN_PLUGIN_FILES_DIR, AK_BASE_DIR,$path);
         copy($path, $destination_file);
         $source_file_mode =  fileperms($path);
