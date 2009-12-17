@@ -2,20 +2,20 @@
 
 class Admin_PermissionsController extends AdminController
 {
-    var $controller_menu_options = array(
+    public $controller_menu_options = array(
     'Accounts'   => array('id' => 'accounts', 'url'=>array('controller'=>'users', 'action'=>'listing')),
     'Roles'   => array('id' => 'roles', 'url'=>array('controller'=>'roles')),
     'Permissions'   => array('id' => 'permissions', 'url'=>array('controller'=>'permissions', 'action'=>'manage')),
     );
 
-    var $admin_selected_tab = 'Manage Users';
+    public $admin_selected_tab = 'Manage Users';
 
-    function index()
+    public function index()
     {
         $this->redirectToAction('manage');
     }
 
-    function manage()
+    public function manage()
     {
         if($this->Request->isPost()){
             $this->_updatePermissions();
@@ -24,7 +24,7 @@ class Admin_PermissionsController extends AdminController
         $this->Extensions =& $this->Extension->find('all', array('include'=>array('permissions' => array('order'=> 'name ASC'))));
     }
 
-    function destroy()
+    public function destroy()
     {
         if(!empty($this->params['id'])){
             if($this->Permission =& $this->Permission->find($this->params['id'], array('include' => 'extension'))){
@@ -45,7 +45,7 @@ class Admin_PermissionsController extends AdminController
         }
     }
 
-    function _updatePermissions()
+    public function _updatePermissions()
     {
         foreach ($this->params['permissions'] as $permission_id=>$roles) {
             $role_ids = array_keys(array_diff($roles, array('')));
@@ -55,7 +55,7 @@ class Admin_PermissionsController extends AdminController
         }
     }
 
-    function _loadPermissionsAndExtensions()
+    public function _loadPermissionsAndExtensions()
     {
         $this->Permissions =& $this->role->getPermissions();
         $this->Extensions =& $this->Extension->find('all', array('include'=>'permissions', 'sort'=>'__owner.name ASC, _permissions.name ASC'));

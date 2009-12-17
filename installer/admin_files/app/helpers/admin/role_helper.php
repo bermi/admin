@@ -2,7 +2,7 @@
 
 class RoleHelper extends AkActionViewHelper
 {
-    function cancel_link($url = array('action' => 'listing'))
+    public function cancel_link($url = array('action' => 'listing'))
     {
         if(!empty($this->_controller->role->id)){
             $url['id'] = $this->_controller->role->id;
@@ -10,31 +10,31 @@ class RoleHelper extends AkActionViewHelper
         return $this->_controller->url_helper->link_to($this->t('Cancel'),$url, array('class'=>'action'));
     }
 
-    function save_button()
+    public function save_button()
     {
         return '<input type="submit" value="'.$this->_controller->t('Save').'" class="primary" />';
     }
 
-    function confirm_delete()
+    public function confirm_delete()
     {
         return '<input type="submit" value="'.$this->_controller->t('Delete').'" />';
     }
 
-    function link_to_show(&$record)
+    public function link_to_show(&$record)
     {
         if(User::can('show action', 'Admin::Roles')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Show'), array('action' => 'show', 'id' => $record->getId()), array('class'=>'action'));
         }
     }
 
-    function link_to_edit(&$record)
+    public function link_to_edit(&$record)
     {
         if(User::can('edit action', 'Admin::Roles')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Edit'), array('action' => 'edit', 'id' => $record->getId()), array('class'=>'action'));
         }
     }
 
-    function link_to_destroy(&$record)
+    public function link_to_destroy(&$record)
     {
         if(User::can('destroy action', 'Admin::Roles')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Delete'), array('action' => 'destroy', 'id' => $record->getId()), array('class'=>'action'));
@@ -42,7 +42,7 @@ class RoleHelper extends AkActionViewHelper
     }
 
 
-    function display_tree_recursivelly($tree, $parent_id = null, $options = array())
+    public function display_tree_recursivelly($tree, $parent_id = null, $options = array())
     {
         if(!empty($tree)){
             foreach(array_keys($tree) as $k){
@@ -60,13 +60,13 @@ class RoleHelper extends AkActionViewHelper
         }
     }
 
-    function select_as_tree($tree)
+    public function select_as_tree($tree)
     {
         $collection = $this->_getRolesForSelect($tree);
         return $this->_controller->form_options_helper->select('role', 'parent_id', $collection);
     }
 
-    function _getRolesForSelect($tree, $parent_id = null, $level = 0)
+    public function _getRolesForSelect($tree, $parent_id = null, $level = 0)
     {
         $result = array();
         if(!empty($tree)){
@@ -84,7 +84,7 @@ class RoleHelper extends AkActionViewHelper
         }
     }
 
-    function link_to_node($Node, $options = array())
+    public function link_to_node($Node, $options = array())
     {
         $detault_options = array(
         'display' => 'name',

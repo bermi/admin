@@ -2,21 +2,21 @@
 
 class RoleTestCase extends AkUnitTest
 {
-    var $module = 'admin';
+    public $module = 'admin';
 
-    function test_setup()
+    public function test_setup()
     {
         $this->uninstallAndInstallMigration('AdminPlugin');
         $this->includeAndInstatiateModels('User', 'Role', 'Permission');
     }
 
-    function test_should_create_root_role()
+    public function test_should_create_root_role()
     {
         $this->assertTrue($Admin =& $this->Role->create(array('name' => 'Administrator')));
         $this->assertTrue($Admin->nested_set->isRoot());
     }
 
-    function test_should_create_direct_child_of_root_node()
+    public function test_should_create_direct_child_of_root_node()
     {
         $Manager =& $this->Role->createUnder('Administrator','Manager');
         $this->assertTrue($Manager->nested_set->isChild());
@@ -25,7 +25,7 @@ class RoleTestCase extends AkUnitTest
         $this->assertEqual($Parent->getAttributes(), $Admin->getAttributes());
     }
 
-    function test_should_create_new_branch()
+    public function test_should_create_new_branch()
     {
         $this->assertTrue($Auditor =& $this->Role->create(array('name' => 'Auditor')));
         $Inspector =& $this->Role->createUnder($Auditor, 'Inspector');
@@ -34,14 +34,14 @@ class RoleTestCase extends AkUnitTest
         $this->assertEqual($Auditor->getAttributes(), $ShouldBeAuditor->getAttributes());
     }
 
-    function test_should_add_supervisor_under_manager()
+    public function test_should_add_supervisor_under_manager()
     {
         $Supervisor =& $this->Role->createUnder('Manager','Supervisor');
         $Admin =& $this->Role->findFirstBy('name', 'Administrator');
         $this->assertEqual($Admin->nested_set->countChildren(), 2);
     }
 
-    function test_should_not_duplicate_roles_for_user()
+    public function test_should_not_duplicate_roles_for_user()
     {
         $Bermi =& $this->User->create(array('email'=>'bermi@example.com', 'login'=>'bermi', 'password'=>'pass', 'password_confirmation'=>'pass'));
         $this->assertFalse($Bermi->isNewRecord());
@@ -64,7 +64,7 @@ class RoleTestCase extends AkUnitTest
         $this->assertEqual($Bermi->role->count(), 1);
     }
 
-    function test_should_not_duplicate_permissions_for_role()
+    public function test_should_not_duplicate_permissions_for_role()
     {
         $CreateUser =& $this->Permission->create(array('name' => 'create user'));
         $this->assertTrue(!$CreateUser->isNewRecord());
@@ -80,7 +80,7 @@ class RoleTestCase extends AkUnitTest
         $this->assertEqual($CreateUser->role->count(), 1);
     }
 
-    function test_should_get_permissions_from_children_roles()
+    public function test_should_get_permissions_from_children_roles()
     {
         $Supervisor =& $this->Role->findFirstBy('name', 'Supervisor');
         $Manager =& $this->Role->findFirstBy('name', 'Manager');
@@ -106,7 +106,7 @@ class RoleTestCase extends AkUnitTest
         array('complete','create','edit','reasign'));
     }
 
-    function test_should_allow_permission_name_repetition()
+    public function test_should_allow_permission_name_repetition()
     {
         $Developer =& $this->Role->findFirstBy('name', 'Developer');
         $Developer->addPermission(array('name'=>'edit', 'extension_id'=>5));
@@ -118,7 +118,7 @@ class RoleTestCase extends AkUnitTest
 
     /**/
 
-    function _getPermissionDescriptionsForRole(&$Role)
+    public function _getPermissionDescriptionsForRole(&$Role)
     {
         $permissions = array_values($Role->collect($Role->getPermissions(),'id','name'));
         sort($permissions);

@@ -2,21 +2,21 @@
 
 class Admin_UsersController extends AdminController
 {
-    var $finder_options = array('User'=>array('include'=>'roles'));
+    public $finder_options = array('User'=>array('include'=>'roles'));
 
-    var $controller_menu_options = array(
+    public $controller_menu_options = array(
     'Accounts'   => array('id' => 'accounts', 'url'=>array('controller'=>'users', 'action'=>'listing')),
     'Roles'   => array('id' => 'roles', 'url'=>array('controller'=>'roles')),
     'Permissions'   => array('id' => 'permissions', 'url'=>array('controller'=>'permissions', 'action'=>'manage')),
     );
-    var $controller_selected_tab = 'Accounts';
+    public $controller_selected_tab = 'Accounts';
 
-    function index()
+    public function index()
     {
         $this->redirectToAction('listing');
     }
 
-    function listing()
+    public function listing()
     {
         $this->user_pages = $this->pagination_helper->getPaginator($this->User, array('items_per_page' => 50));
         $finder_options = $this->pagination_helper->getFindOptions($this->User);
@@ -29,7 +29,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    function show()
+    public function show()
     {
         if (!$this->User){
             $this->flash['error'] = $this->t('User not found.');
@@ -37,14 +37,14 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    function add()
+    public function add()
     {
         !empty($this->params['id']) ? $this->redirectTo(array('action' => 'add', 'id' => NULL)) : null;
         $this->_loadCurrentUserRoles();
         $this->_addOrEdit();
     }
 
-    function edit()
+    public function edit()
     {
         if (empty($this->params['id']) || empty($this->User->id)){
             $this->flash['error'] = $this->t('Invalid user or not found.');
@@ -58,7 +58,7 @@ class Admin_UsersController extends AdminController
         $this->_addOrEdit();
     }
 
-    function destroy()
+    public function destroy()
     {
         if (empty($this->params['id']) || empty($this->User->id)){
             $this->flash['notice'] = $this->t('Invalid user or not found.');
@@ -79,7 +79,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    function _addOrEdit()
+    public function _addOrEdit()
     {
         $this->_protectUserFromBeingModified();
         if ($this->Request->isPost() && !empty($this->params['user'])){
@@ -106,7 +106,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    function _protectUserFromBeingModified()
+    public function _protectUserFromBeingModified()
     {
         $self_editing = $this->User->getId() == $this->CurrentUser->getId();
         if($this->User->isNewRecord()){

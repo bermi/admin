@@ -3,9 +3,9 @@
 
 class RoleUser extends ActiveRecord 
 {
-    var $_avoidTableNameValidation = true;
+    public $_avoidTableNameValidation = true;
     
-    function RoleUser()
+    public function RoleUser()
     {
         $this->setModelName("RoleUser");
         $attributes = (array)func_get_args();

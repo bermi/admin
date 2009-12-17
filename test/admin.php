@@ -17,7 +17,7 @@ require_once(AK_LIB_DIR.DS.'AkInstaller.php');
 
 session_start();
 
-$test = &new GroupTest('Admin Plugin Unit Tests');
+$test = new GroupTest('Admin Plugin Unit Tests');
 foreach (array('extension', 'role', 'user') as $model){
     $test->addTestFile(AK_TEST_DIR.DS.'unit'.DS.'app'.DS.'models'.DS.$model.'.php');
 }

@@ -22,11 +22,11 @@ require_once(AK_GENERATORS_DIR.DS.'scaffold'.DS.'scaffold_generator.php');
 
 class AdminScaffoldGenerator extends  ScaffoldGenerator
 {
-    var $sintags = true;
+    public $sintags = true;
     //var $module_preffix = 'admin';
-    var $generators_dir = AK_ADMIN_PLUGIN_GENERATORS_DIR;
+    public $generators_dir = AK_ADMIN_PLUGIN_GENERATORS_DIR;
 
-    function cast()
+    public function cast()
     {
         $this->controller_name = 'Admin::'.(empty($this->controller_name) ? $this->model_name : (AkInflector::camelize($this->controller_name)));
         return parent::cast();

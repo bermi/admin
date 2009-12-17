@@ -2,12 +2,12 @@
 
 class Permission extends ActiveRecord
 {
-    var $belongs_to = 'extension';
-    var $habtm = array(
+    public $belongs_to = 'extension';
+    public $habtm = array(
         'roles'
         );
 
-    function validate()
+    public function validate()
     {
         $this->validatesUniquenessOf('name', array('scope' => 'extension_id'));
     }

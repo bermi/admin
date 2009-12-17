@@ -2,7 +2,7 @@
 
 class AdminPluginInstaller extends AkInstaller
 {
-    function up_1()
+    public function up_1()
     {
         $this->createTable('users', '
           id,
@@ -40,12 +40,12 @@ class AdminPluginInstaller extends AkInstaller
         $this->addDefaults();
     }
 
-    function down_1()
+    public function down_1()
     {
         $this->dropTables('users, roles, roles_users, permissions_roles,  permissions, extensions');
     }
 
-    function addDefaults()
+    public function addDefaults()
     {
         if(AK_ENVIRONMENT == 'testing'){
             return ;
@@ -56,9 +56,9 @@ class AdminPluginInstaller extends AkInstaller
         $this->createAdministrator();
     }
 
-    function createExtensions()
+    public function createExtensions()
     {
-        $Extension =& new Extension();
+        $Extension = new Extension();
         $this->AdminUsers =& $Extension->create(array('name'=>'Admin::Users','is_core'=>true, 'is_enabled' => true));
         $this->AdminPermissions =& $Extension->create(array('name'=>'Admin::Permissions','is_core'=>true, 'is_enabled' => true));
         $this->AdminRoles =& $Extension->create(array('name'=>'Admin::Roles','is_core'=>true, 'is_enabled' => true));
@@ -66,9 +66,9 @@ class AdminPluginInstaller extends AkInstaller
         $this->AdminMenuTabs =& $Extension->create(array('name'=>'Admin Menu Tabs','is_core'=>true, 'is_enabled' => true));
     }
 
-    function createRoles()
+    public function createRoles()
     {
-        $Role =& new Role();
+        $Role = new Role();
         $ApplicationOwner =& $Role->create(array('name' => 'Application owner'));
 
         $Administrator =& $ApplicationOwner->addChildrenRole('Administrator');
@@ -86,10 +86,10 @@ class AdminPluginInstaller extends AkInstaller
 
     }
 
-    function createAdministrator()
+    public function createAdministrator()
     {
-        $Role =& new Role();
-        $ApplicationOwner =& new User(array(
+        $Role = new Role();
+        $ApplicationOwner = new User(array(
         'login'=>$this->root_details['login'], 
         'email'=>$this->root_details['email'], 
         'password'=> $this->root_details['password'], 

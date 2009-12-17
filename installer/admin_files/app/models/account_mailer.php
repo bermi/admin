@@ -2,16 +2,16 @@
 
 class AccountMailer extends AkActionMailer
 {
-    var $_password_reset_url;
-    var $delivery_method = 'smtp';
+    public $_password_reset_url;
+    public $delivery_method = 'smtp';
 
-    function __construct()
+    public function __construct()
     {
         $this->_settings = Ak::getSettings('admin');
         return parent::__construct();
     }
 
-    function registration_details($recipient)
+    public function registration_details($recipient)
     {
         $this->recipients    =  $recipient;
         $this->subject    = "[{$this->_settings['application_name']}] ".$this->t('Registration details');
@@ -25,7 +25,7 @@ class AccountMailer extends AkActionMailer
     }
 
 
-    function password_reminder($recipient)
+    public function password_reminder($recipient)
     {
         $this->recipients =  array($recipient);
         $this->subject    = "[{$this->_settings['application_name']}] ".$this->t('Password reminder');
@@ -37,17 +37,17 @@ class AccountMailer extends AkActionMailer
     }
 
 
-    function setPasswordResetUrl($password_reset_url)
+    public function setPasswordResetUrl($password_reset_url)
     {
         $this->_password_reset_url = $password_reset_url;
     }
 
-    function getPasswordResetUrl()
+    public function getPasswordResetUrl()
     {
         return $this->_password_reset_url;
     }
 
-    function getSignInUrl()
+    public function getSignInUrl()
     {
         $settings = Ak::getSettings('admin');
         $settings['base_url'] = isset($settings['base_url']) ? $settings['base_url'] : true;

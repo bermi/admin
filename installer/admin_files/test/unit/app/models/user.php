@@ -2,19 +2,19 @@
 
 class UserTestCase extends AkUnitTest
 {
-    var $module = 'admin';
+    public $module = 'admin';
 
-    var $insert_models_data = true;
+    public $insert_models_data = true;
 
-    function test_setup()
+    public function test_setup()
     {
         $this->uninstallAndInstallMigration('AdminPlugin');
         $this->includeAndInstatiateModels('User', 'Sentinel', 'Role', 'Permission');
     }
 
-    function test_should_request_valid_password()
+    public function test_should_request_valid_password()
     {
-        $Alicia =& new User(array('email' => 'alicia@example.com', 'login'=>'alicia', 'password' => 'abcd1234'));
+        $Alicia = new User(array('email' => 'alicia@example.com', 'login'=>'alicia', 'password' => 'abcd1234'));
         $this->assertFalse($Alicia->save());
         $this->assertEqual("can't be blank", $Alicia->getErrorsOn('password_confirmation'));
 
@@ -24,22 +24,22 @@ class UserTestCase extends AkUnitTest
         $this->assertTrue(strlen($Alicia->get('password_salt')) == 16);
     }
 
-    function test_should_avoid_replicated_users()
+    public function test_should_avoid_replicated_users()
     {
-        $Alicia =& new User(array('email' => 'alicia@example.com', 'login'=>'alicia', 'password' => 'abcd1234', 'password_confirmation' => 'abcd1234'));
+        $Alicia = new User(array('email' => 'alicia@example.com', 'login'=>'alicia', 'password' => 'abcd1234', 'password_confirmation' => 'abcd1234'));
         $this->assertFalse($Alicia->save());
         $this->assertEqual("email alicia@example.com already in use", $Alicia->getErrorsOn('email'));
         $this->assertEqual("login alicia already in use", $Alicia->getErrorsOn('login'));
     }
 
-    function test_should_prevent_from_using_invalid_email_addresses()
+    public function test_should_prevent_from_using_invalid_email_addresses()
     {
-        $Bogus =& new User(array('email' => 'bogus', 'login'=>'alicia', 'password' => 'abcd1234', 'password_confirmation' => 'abcd1234'));
+        $Bogus = new User(array('email' => 'bogus', 'login'=>'alicia', 'password' => 'abcd1234', 'password_confirmation' => 'abcd1234'));
         $this->assertFalse($Bogus->save());
         $this->assertEqual("Invalid email address", $Bogus->getErrorsOn('email'));
     }
     
-    function test_should_update_without_changing_password()
+    public function test_should_update_without_changing_password()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $pass = $Alicia->get('password');
@@ -48,7 +48,7 @@ class UserTestCase extends AkUnitTest
         $this->assertEqual($Alicia->get('password'), $pass);
     }
 
-    function test_should_not_update_password_if_no_confirmation_is_provided()
+    public function test_should_not_update_password_if_no_confirmation_is_provided()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $pass = $Alicia->get('password');
@@ -58,7 +58,7 @@ class UserTestCase extends AkUnitTest
         $this->assertEqual($Alicia->get('password'), $pass);
     }
 
-    function test_should_update_password()
+    public function test_should_update_password()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $pass = $Alicia->get('password');
@@ -69,7 +69,7 @@ class UserTestCase extends AkUnitTest
         $this->assertNotEqual($Alicia->get('password'), $pass);
     }
 
-    function test_should_emit_and_and_validate_single_use_login_token()
+    public function test_should_emit_and_and_validate_single_use_login_token()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $token = $Alicia->getToken(array('single_use'=> true));
@@ -78,7 +78,7 @@ class UserTestCase extends AkUnitTest
         $this->assertFalse($User = Sentinel::authenticateWithToken($token));
     }
 
-    function test_should_emit_and_and_validate_login_token()
+    public function test_should_emit_and_and_validate_login_token()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $token = $Alicia->getToken();
@@ -87,7 +87,7 @@ class UserTestCase extends AkUnitTest
         $this->assertTrue($User = Sentinel::authenticateWithToken($token));
     }
     
-    function test_should_issue_expiring_tokens()
+    public function test_should_issue_expiring_tokens()
     {
         
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
@@ -99,14 +99,14 @@ class UserTestCase extends AkUnitTest
         $this->assertFalse($User = Sentinel::authenticateWithToken($token));
     }
 
-    function test_should_detect_if_given_password_is_valid()
+    public function test_should_detect_if_given_password_is_valid()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $this->assertTrue($Alicia->isValidPassword('goodpass'));
         $this->assertFalse($Alicia->isValidPassword('badone'));
     }
 
-    function test_should_avoid_changing_login_if_no_password_is_provided()
+    public function test_should_avoid_changing_login_if_no_password_is_provided()
     {
         $Alicia =& $this->User->findFirstBy('login', 'alicia');
         $Alicia->set('login', 'aliciasadurni');
@@ -124,7 +124,7 @@ class UserTestCase extends AkUnitTest
     }
 
 
-    function test_should_set_roles()
+    public function test_should_set_roles()
     {
         $Alicia =& $this->User->findFirstBy('login', 'aliciasadurni');
 
@@ -143,7 +143,7 @@ class UserTestCase extends AkUnitTest
     }
 
 
-    function test_should_be_able_to_authenticate()
+    public function test_should_be_able_to_authenticate()
     {
         $this->assertFalse(User::authenticate('aliciasadurni', 'badpass'));
         $this->assertTrue($Alicia = User::authenticate('aliciasadurni', 'goodpass'));
@@ -151,15 +151,15 @@ class UserTestCase extends AkUnitTest
         $this->assertEqual(substr($Alicia->get('last_login_at'),0,-2), substr(Ak::getDate(),0,-2));
     }
 
-    function test_should_create_disabled_user()
+    public function test_should_create_disabled_user()
     {
-        $Bermi =& new User(array('email'=>'bermi@example.com', 'login'=>'bermi', 'password'=>'abcde', 'password_confirmation'=>'abcde', 'is_enabled' => false));
+        $Bermi = new User(array('email'=>'bermi@example.com', 'login'=>'bermi', 'password'=>'abcde', 'password_confirmation'=>'abcde', 'is_enabled' => false));
         $this->assertTrue($Bermi->save());
 
         $this->assertFalse($Bermi->get('is_enabled'));
     }
 
-    function test_should_only_authenticate_users_with_roles()
+    public function test_should_only_authenticate_users_with_roles()
     {
         $Bermi =& $this->User->findFirstBy('login', 'bermi');
         $Bermi->enable();
@@ -170,7 +170,7 @@ class UserTestCase extends AkUnitTest
     }
 
 
-    function test_should_only_authenticate_enabled_users()
+    public function test_should_only_authenticate_enabled_users()
     {
         $Bermi =& $this->User->findFirstBy('login', 'bermi');
 
@@ -179,26 +179,26 @@ class UserTestCase extends AkUnitTest
         $Bermi->disable();
         $this->assertFalse(User::authenticate('bermi', 'abcde'));
 
-        $Role =& new Role();
+        $Role = new Role();
         $Role =& $Role->findFirstBy('name', 'Tmp Role');
         $Role->destroy();
     }
 
 
-    function test_should_get_roles()
+    public function test_should_get_roles()
     {
         $Alicia =& $this->User->findFirstBy('login', 'aliciasadurni');
         $Alicia->role->load();
         $this->assertEqual(array_values($Alicia->collect($Alicia->roles, 'id','name')), array('Visitor', 'Editor', 'Copywriter'));
     }
 
-    function test_should_get_permissions()
+    public function test_should_get_permissions()
     {
         $Alicia =& $this->User->findFirstBy('login', 'aliciasadurni');
         $this->assertEqual($this->_getPermissionDescriptionsForUser($Alicia), array('authenticate','create','edit','list','view'));
     }
 
-    function test_should_verify_user_credential_for_specific_tasks()
+    public function test_should_verify_user_credential_for_specific_tasks()
     {
         $Alicia =& $this->User->findFirstBy('login', 'aliciasadurni');
 
@@ -212,7 +212,7 @@ class UserTestCase extends AkUnitTest
         $this->assertFalse($Alicia->can('connect'));
     }
 
-    function test_should_verify_user_credential_for_specific_tasks_on_extensions()
+    public function test_should_verify_user_credential_for_specific_tasks_on_extensions()
     {
         $Alicia =& $this->User->findFirstBy('login', 'aliciasadurni');
         $Alicia->role->add($this->Role->findFirstBy('name', 'Developer'));
@@ -224,14 +224,14 @@ class UserTestCase extends AkUnitTest
         $this->assertFalse($Alicia->can('connect'));
     }
 
-    function test_should_set_user_roles_by_id()
+    public function test_should_set_user_roles_by_id()
     {
         $Administrator =& $this->Role->findFirstBy('name', 'Administrator');
         $Developer =& $this->Role->findFirstBy('name', 'Developer');
         $Visitor =& $this->Role->findFirstBy('name', 'Visitor');
 
 
-        $Salavert =& new User(array('email'=>'salavert@example.com', 'login'=>'salavert', 'password'=>'abcde', 'password_confirmation'=>'abcde'));
+        $Salavert = new User(array('email'=>'salavert@example.com', 'login'=>'salavert', 'password'=>'abcde', 'password_confirmation'=>'abcde'));
         $this->assertTrue($Salavert->save());
 
         $Salavert->role->load();
@@ -252,7 +252,7 @@ class UserTestCase extends AkUnitTest
     }
 
     /**/
-    function _createRoles()
+    public function _createRoles()
     {
         $Administrator =& $this->Role->create(array('name' => 'Administrator'));
 
@@ -295,7 +295,7 @@ class UserTestCase extends AkUnitTest
         $Auditor->addPermission('warn');
     }
 
-    function _getPermissionDescriptionsForUser(&$User)
+    public function _getPermissionDescriptionsForUser(&$User)
     {
         $permissions = array_values($User->collect($User->getPermissions(),'id','name'));
         sort($permissions);

@@ -11,44 +11,44 @@ include(dirname(__FILE__).str_repeat(DS.'..', 4).DS.'config'.DS.'config.php');
 
 class Makelos
 {
-    var $repository = 'http://svn.akelos.org/plugins/admin';
+    public $repository = 'http://svn.akelos.org/plugins/admin';
 
-    function help()
+    public function help()
     {
         echo "\nValid commands are ".join(', ', get_class_methods('Makelos'))."\n";
     }
 
-    function test($options = array())
+    public function test($options = array())
     {
         system('/usr/bin/env php '.dirname(__FILE__).'/test/admin.php');
     }
 
-    function install()
+    public function install()
     {
         $Installer =& $this->_getInstaller();
         $Installer->install();
     }
 
-    function uninstall()
+    public function uninstall()
     {
         $Installer =& $this->_getInstaller();
         $Installer->uninstall();
     }
 
-    function &_getInstaller()
+    public function &_getInstaller()
     {
         require_once(dirname(__FILE__).DS.'installer'.DS.'admin_installer.php');
-        $Installer =& new AdminInstaller();
+        $Installer = new AdminInstaller();
         return $Installer;
     }
 
-    function connectToDatabase($database_settings)
+    public function connectToDatabase($database_settings)
     {
         $this->_includeDependencies();
         Ak::db($database_settings[AK_ENVIRONMENT]);
     }
     
-    function _includeDependencies()
+    public function _includeDependencies()
     {
         require_once(AK_LIB_DIR.DS.'Ak.php');
         require_once(AK_LIB_DIR.DS.'AkObject.php');

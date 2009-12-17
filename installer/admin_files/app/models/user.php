@@ -6,18 +6,18 @@ defined('AK_DEFAULT_ADMIN_SETTINGS') ? null : define('AK_DEFAULT_ADMIN_SETTINGS'
 
 class User extends ActiveRecord
 {
-    var $habtm = array('roles' => array('unique'=>true, 'foreign_key'=>'user_id'));
+    public $habtm = array('roles' => array('unique'=>true, 'foreign_key'=>'user_id'));
 
     /**
      * @access private
      */
-    var $__initial_attributes = array();
-    var $__requires_password_confirmation = true;
+    public $__initial_attributes = array();
+    public $__requires_password_confirmation = true;
 
     /**
      * We need to get initial values when instantiating to know if attributes like password have been changed
      */
-    function __construct()
+    public function __construct()
     {
         $attributes = (array)func_get_args();
         $this->__initial_attributes = isset($attributes[1]) && is_array($attributes[1]) ? $attributes[1] : array();
@@ -31,9 +31,9 @@ class User extends ActiveRecord
      * @param string $password
      * @return False if not found or not enabled, User instance if succedes
      */
-    function authenticate($login, $password)
+    public function authenticate($login, $password)
     {
-        $UserInstance =& new User();
+        $UserInstance = new User();
 
         $login_or_email = preg_match(AK_EMAIL_REGULAR_EXPRESSION, $login) ? 'email' : 'login';
 
@@ -45,7 +45,7 @@ class User extends ActiveRecord
         return false;
     }
 
-    function signUp($user_details, $options = array())
+    public function signUp($user_details, $options = array())
     {
         $user_details['is_enabled'] = true;
         $this->setAttributes($user_details);
@@ -60,7 +60,7 @@ class User extends ActiveRecord
         return false;
     }
 
-    function setDefaultRole()
+    public function setDefaultRole()
     {
         $settings = Ak::getSettings(AK_DEFAULT_ADMIN_SETTINGS);
         if(!empty($settings['account_settings']['default_role'])){
@@ -72,7 +72,7 @@ class User extends ActiveRecord
         }
     }
 
-    function sendSignupMessage($options = array())
+    public function sendSignupMessage($options = array())
     {
         $default_options = array(
         'signup_message' => 'registration_details'
@@ -80,7 +80,7 @@ class User extends ActiveRecord
         $options = array_merge($default_options, $options);
         if(!empty($options['signup_message'])){
             Ak::import_mailer('account_mailer');
-            $Mailer =& new AccountMailer();
+            $Mailer = new AccountMailer();
             $Mailer->_login = $options['login'];
             $Mailer->_password = $options['password'];
             $Mailer->deliver($options['signup_message'], $this->get('email'));
@@ -91,7 +91,7 @@ class User extends ActiveRecord
     // Validation
     // ---------------
 
-    function validate()
+    public function validate()
     {
         $this->validatesUniquenessOf('email', array('message'=>$this->t('email %email already in use', array('%email'=>$this->get('email')))));
         $this->validatesUniquenessOf('login', array('message'=>$this->t('login %login already in use', array('%login'=>$this->get('login')))));
@@ -101,7 +101,7 @@ class User extends ActiveRecord
         $this->validatesLengthOf('password', array('in'=>array(4, 40), 'too_long' => $this->t('pick a shorter password'), 'too_short' => $this->t('pick a longer password')));
     }
 
-    function validatesPassword()
+    public function validatesPassword()
     {
         $requires_password_confirmation = $this->hasAttributeBeenModified('password') ? $this->__requires_password_confirmation : false;
         $this->validatesPresenceOf($requires_password_confirmation ? array('password','password_confirmation') : array('password'));
@@ -109,17 +109,17 @@ class User extends ActiveRecord
         return strlen($this->getErrorsOn('password').$this->getErrorsOn('password_confirmation')) == 0;
     }
 
-    function needsPasswordLengthValidation()
+    public function needsPasswordLengthValidation()
     {
         return $this->isNewRecord() || !empty($this->password);
     }
 
-    function needsEmailValidation()
+    public function needsEmailValidation()
     {
         return empty($this->_byspass_email_validation);
     }
 
-    function validatesExistanceOfOriginalPasswordWhenUpdatingLogin()
+    public function validatesExistanceOfOriginalPasswordWhenUpdatingLogin()
     {
         if($this->hasAttributeBeenModified('login')){
             if(!$this->isValidPassword($this->get('password'), true, true)){
@@ -130,7 +130,7 @@ class User extends ActiveRecord
         }
     }
 
-    function isValidPassword($password, $hash_password = true, $hash_using_original_name = false)
+    public function isValidPassword($password, $hash_password = true, $hash_using_original_name = false)
     {
         return $this->getPreviousValueForAttribute('password') == ($hash_password ? $this->sha1($password, $hash_using_original_name) : $password);
     }
@@ -139,19 +139,19 @@ class User extends ActiveRecord
     // Triggers
     // ---------------
 
-    function beforeCreate()
+    public function beforeCreate()
     {
         $this->validatesPassword();
         $this->encryptPassword();
         return !$this->hasErrors();
     }
 
-    function beforeDestroy()
+    public function beforeDestroy()
     {
         return !$this->hasRootPrivileges();
     }
 
-    function beforeUpdate()
+    public function beforeUpdate()
     {
         $this->validatesExistanceOfOriginalPasswordWhenUpdatingLogin();
         $this->validatesPassword();
@@ -159,17 +159,17 @@ class User extends ActiveRecord
         return !$this->hasErrors();
     }
 
-    function afterSave()
+    public function afterSave()
     {
         $this->__initial_attributes = $this->getAttributes();
         return true;
     }
 
-    function afterCreate()
+    public function afterCreate()
     {
         if(empty($this->roles)){
             $this->role->load();
-            $Role =& new Role();
+            $Role = new Role();
             if($Role =& $Role->findFirstBy('name', AK_DEFAULT_USER_ROLE)){
                 $this->role->set($Role);
             }
@@ -183,12 +183,12 @@ class User extends ActiveRecord
     // --------------------------
 
 
-    function enable()
+    public function enable()
     {
         $this->updateAttribute('is_enabled', true);
     }
 
-    function disable()
+    public function disable()
     {
         $this->updateAttribute('is_enabled', false);
     }
@@ -200,12 +200,12 @@ class User extends ActiveRecord
     // --------------------------
 
 
-    function hasAttributeBeenModified($attribute)
+    public function hasAttributeBeenModified($attribute)
     {
         return $this->getPreviousValueForAttribute($attribute) != $this->get($attribute);
     }
 
-    function getPreviousValueForAttribute($attribute)
+    public function getPreviousValueForAttribute($attribute)
     {
         return $this->hasColumn($attribute) && isset($this->__initial_attributes[$attribute]) ? $this->__initial_attributes[$attribute] : null;
     }
@@ -214,24 +214,24 @@ class User extends ActiveRecord
     // Hashing
     // -----------------------
 
-    function encryptPassword()
+    public function encryptPassword()
     {
         $this->set('password', $this->sha1($this->get('password')));
     }
 
-    function sha1($phrase, $use_original_login = false)
+    public function sha1($phrase, $use_original_login = false)
     {
         $login = $use_original_login ? $this->getPreviousValueForAttribute('login') : $this->get('login');
         empty($this->password_salt) ? $this->set('password_salt', Ak::randomString(16)) : null;
         return sha1($this->get('password_salt').$phrase.$login);
     }
 
-    function isTokenValid($token)
+    public function isTokenValid($token)
     {
         return $this->getToken() == $token;
     }
 
-    function _encryptPasswordUnlessEmptyOrUnchanged()
+    public function _encryptPasswordUnlessEmptyOrUnchanged()
     {
         if($this->hasAttributeBeenModified('password') || $this->get('password') == ''){
             $this->encryptPassword();
@@ -251,7 +251,7 @@ class User extends ActiveRecord
      * 
      * Tokens can be validated using the Sentinel::isValidLoginTokenForUser method
      */
-    function getToken($options = array())
+    public function getToken($options = array())
     {
         $default_options = array(
         'id' => (int)$this->get('id'),
@@ -267,7 +267,7 @@ class User extends ActiveRecord
         return $this->_encodeToken($options);
     }
 
-    function _getTokenHash($options)
+    public function _getTokenHash($options)
     {
         return md5($this->get('id').
         $this->get('email').
@@ -285,7 +285,7 @@ class User extends ActiveRecord
      * @param array $options token options
      * @return string Url ready authentication Token
      */
-    function _encodeToken($options)
+    public function _encodeToken($options)
     {
         return base64_encode(Ak::blowfishEncrypt(Ak::toJson($options), Ak::getSetting(AK_DEFAULT_ADMIN_SETTINGS, 'token_key')));
     }
@@ -297,7 +297,7 @@ class User extends ActiveRecord
      * @param bool $url_decode should it URL decode the token true by default
      * @return array Array of options for the authentication token
      */
-    function _decodeToken($token)
+    public function _decodeToken($token)
     {
         return (array)Ak::fromJson(Ak::blowfishDecrypt(base64_decode($token), Ak::getSetting(AK_DEFAULT_ADMIN_SETTINGS, 'token_key')));
     }
@@ -305,7 +305,7 @@ class User extends ActiveRecord
 
     // Permissions
     // ----------------------
-    function &getPermissions()
+    public function &getPermissions()
     {
         $this->role->load();
         $Permissions = array();
@@ -317,7 +317,7 @@ class User extends ActiveRecord
         return $Permissions;
     }
 
-    function can($task, $extension = null, $force_reload = false)
+    public function can($task, $extension = null, $force_reload = false)
     {
         if(!isset($this->_activeRecordHasBeenInstantiated) || 
             !in_array('User', array($this->getModelName(), $this->getParentModelName()))){
@@ -342,7 +342,7 @@ class User extends ActiveRecord
         return (!empty($Permissions[$extension_id]) && in_array($task, $Permissions[$extension_id])) ? true : $this->_addRootPermission($task, $extension_id);
     }
 
-    function hasRole($role_name, $force_reload = false)
+    public function hasRole($role_name, $force_reload = false)
     {
         if(!isset($this->_activeRecordHasBeenInstantiated)){
             $User =& User::getCurrentUser();
@@ -360,7 +360,7 @@ class User extends ActiveRecord
         return false;
     }
 
-    function &getRoles($force_reload = false)
+    public function &getRoles($force_reload = false)
     {
         if((!isset($this->LoadedRoles) || $force_reload) && $this->role->load()){
             $this->LoadedRoles = array();
@@ -378,16 +378,16 @@ class User extends ActiveRecord
         return $result;
     }
 
-    function hasRootPrivileges()
+    public function hasRootPrivileges()
     {
         $this->role->load();
         return isset($this->roles[0]) ? $this->roles[0]->nested_set->isRoot() : false;
     }
 
-    function _addRootPermission($task, $extension_id)
+    public function _addRootPermission($task, $extension_id)
     {
         if($this->hasRootPrivileges()){
-            $Permission =& new Permission();
+            $Permission = new Permission();
             $Permission =& $Permission->findOrCreateBy('name AND extension_id', $task, $extension_id);
             $this->roles[0]->addPermission($Permission);
             return true;
@@ -395,7 +395,7 @@ class User extends ActiveRecord
         return false;
     }
 
-    function _getExtensionId($extension, $force_reload = false)
+    public function _getExtensionId($extension, $force_reload = false)
     {
         static $extenssion_ids = array();
         if(is_string($extension) && !is_numeric($extension)){
@@ -404,7 +404,7 @@ class User extends ActiveRecord
             }
             $extension_key = $extension;
             Ak::import('Extension');
-            $ExtensionInstance =& new Extension();
+            $ExtensionInstance = new Extension();
             $extension =& $ExtensionInstance->findOrCreateBy('name', $extension);
         }
         $extension = is_object($extension) ? $extension->getId() : (empty($extension)?'core':$extension);
@@ -419,7 +419,7 @@ class User extends ActiveRecord
      * @see isLoaded() to check before and not throw an error
      * @return User
      */
-    function getCurrentUser()
+    public function getCurrentUser()
     {
         $User =& Ak::getStaticVar('CurrentUser');
         if (empty($User)) {
@@ -432,7 +432,7 @@ class User extends ActiveRecord
      *
      * @return boolean
      */
-    function isLoaded()
+    public function isLoaded()
     {
         return Ak::getStaticVar('CurrentUser') != null;
     }
@@ -442,13 +442,13 @@ class User extends ActiveRecord
      *
      * @param User $CurrentUser
      */
-    function setCurrentUser($CurrentUser)
+    public function setCurrentUser($CurrentUser)
     {
         Ak::_staticVar('CurrentUser', $CurrentUser);
     }
 
 
-    function unsetCurrentUser()
+    public function unsetCurrentUser()
     {
         User::setCurrentUser(null);
     }

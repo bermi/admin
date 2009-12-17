@@ -8,12 +8,12 @@
 
 class <?php  echo $model_name?>TestCase extends  AkUnitTest
 {
-    function test_setup()
+    public function test_setup()
     {
         $this->installAndIncludeModels('<?php  echo $model_name?>');
     }
     
-    function test_should_be_added()
+    public function test_should_be_added()
     {
         // An instance of <?php  echo $model_name?> model is available at 
         // $this-><?php  echo $model_name; ?>

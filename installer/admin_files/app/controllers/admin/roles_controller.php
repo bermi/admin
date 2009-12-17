@@ -2,26 +2,26 @@
 
 class Admin_RolesController extends AdminController
 {
-    var $controller_menu_options = array(
+    public $controller_menu_options = array(
     'Accounts'   => array('id' => 'accounts', 'url'=>array('controller'=>'users', 'action'=>'listing')),
     'Roles'   => array('id' => 'roles', 'url'=>array('controller'=>'roles')),
     'Permissions'   => array('id' => 'permissions', 'url'=>array('controller'=>'permissions', 'action'=>'manage')),
     );
 
-    var $admin_selected_tab = 'Manage Users';
-    var $controller_selected_tab = 'Roles';
+    public $admin_selected_tab = 'Manage Users';
+    public $controller_selected_tab = 'Roles';
 
-    function index()
+    public function index()
     {
         $this->redirectToAction('listing');
     }
 
-    function listing()
+    public function listing()
     {
         $this->_loadCurrentUserRoles();
     }
 
-    function add()
+    public function add()
     {
         $this->_loadCurrentUserRoles();
 
@@ -36,7 +36,7 @@ class Admin_RolesController extends AdminController
         }
     }
 
-    function edit()
+    public function edit()
     {
         if (empty($this->params['id'])){
             $this->redirectToAction('listing');
@@ -48,7 +48,7 @@ class Admin_RolesController extends AdminController
     }
     
 
-    function destroy()
+    public function destroy()
     {
         if(!empty($this->params['id'])){
             if($this->role = $this->role->find($this->params['id'])){
@@ -65,7 +65,7 @@ class Admin_RolesController extends AdminController
         }
     }
 
-    function _addOrEditRole($action)
+    public function _addOrEditRole($action)
     {
         $this->role->setAttributes(Ak::pick('name,description,is_enabled', $this->params['role']));
         if ($this->role->save()){

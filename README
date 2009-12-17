@@ -68,11 +68,11 @@ The ideal scenario is to have an authenticated area under the admin module and u
 
 By default actions on controllers inside the admin module are added to the "Permissions table". In order to disable this behaviour on your controller, just define the attribute
 
-    var $protect_all_actions = false;
+    public $protect_all_actions = false;
 
 and select individual actions if any using
 
-    var $protected_actions = 'index,show,edit,delete';
+    public $protected_actions = 'index,show,edit,delete';
 
 If you're logged as Root, new permissions found in your code will be added automatically to your permission pool. Just like with multilingual strings on Akelos.
 
@@ -94,14 +94,14 @@ Menus are built by declaring in your controller the following attributes:
     class Admin_UsersController extends AdminController
     {
         // just for this controller
-        var $controller_menu_options = array(
+        public $controller_menu_options = array(
         'Accounts'   => array('id' => 'accounts', 'url'=>array('controller'=>'users', 'action'=>'listing')),
         'Roles'   => array('id' => 'roles', 'url'=>array('controller'=>'roles')),
         'Permissions'   => array('id' => 'permissions', 'url'=>array('controller'=>'permissions', 'action'=>'manage')),
         );
         
         // Which tab to select on the controller menu
-        var $controller_selected_tab = 'Accounts';
+        public $controller_selected_tab = 'Accounts';
     }
 
 The code is quite straight forward.

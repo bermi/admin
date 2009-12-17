@@ -2,9 +2,9 @@
 
 class PermissionRole extends ActiveRecord 
 {
-    var $_avoidTableNameValidation = true;
+    public $_avoidTableNameValidation = true;
     
-    function PermissionRole()
+    public function PermissionRole()
     {
         $this->setModelName("PermissionRole");
         $attributes = (array)func_get_args();

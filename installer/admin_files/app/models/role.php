@@ -2,13 +2,13 @@
 
 class Role extends ActiveRecord
 {
-    var $habtm = array(
+    public $habtm = array(
     'users' => array('unique'=>true),
     'permissions',
     );
-    var $acts_as = 'nested_set';
+    public $acts_as = 'nested_set';
 
-    function validate()
+    public function validate()
     {
         $this->validatesPresenceOf('name');
         $this->validatesUniquenessOf('name'); // for hierarchical rbac add: array('scope'=>'parent_id')
@@ -18,16 +18,16 @@ class Role extends ActiveRecord
         }
     }
 
-    function &createUnder($Parent, $Child)
+    public function &createUnder($Parent, $Child)
     {
         if(is_string($Child)){
-            $Child =& new Role(is_array($Child) ? $Child : array('name' => $Child));
+            $Child = new Role(is_array($Child) ? $Child : array('name' => $Child));
         }
         $Child->addUnder($Parent);
         return $Child;
     }
     
-    function addUnder($Parent)
+    public function addUnder($Parent)
     {
         $this->transactionStart();
         $is_new_record = $this->isNewRecord();
@@ -46,12 +46,12 @@ class Role extends ActiveRecord
         $this->transactionComplete();
     }
 
-    function &addChildrenRole($Children)
+    public function &addChildrenRole($Children)
     {
         return $this->createUnder($this, $Children);
     }
 
-    function addPermission($Permission)
+    public function addPermission($Permission)
     {
         if(!is_object($Permission)){
             $PermissionInstance = new Permission();
@@ -71,7 +71,7 @@ class Role extends ActiveRecord
         return $this->permission->add($Permission);
     }
 
-    function &getPermissions()
+    public function &getPermissions()
     {
         $this->permission->load();
         $Permissions = empty($this->permissions) ? array() : $this->permissions;
