@@ -6,7 +6,7 @@
 defined('DS') || define('DS', DIRECTORY_SEPARATOR);
 
 if(!defined('AK_BASE_DIR')){
-    $base_dir = realpath(dirname(__FILE__).str_repeat(DS.'..', 5));
+    $base_dir = realpath(dirname(__FILE__).str_repeat(DS.'..', 7));
     if(!is_dir($base_dir.'test'.DS.'shared')){
         $akelos_version = trim(@`akelos -v`);
         if(version_compare($akelos_version, '1.0', '>=')){
@@ -26,15 +26,12 @@ class AdminPluginUnitTest extends AkUnitTest
 {
     public function __construct() {
         AkConfig::setDir('suite', dirname(__FILE__));
-        $this->rebaseAppPaths(realpath(dirname(__FILE__).DS.'..'.DS.'installer'.DS.'admin_files'));
-        $this->_original_fixtures = AkConfig::getDir('fixtures');
-        AkConfig::setDir('fixtures', dirname(__FILE__).DS.'fixtures');
+        $this->rebaseAppPaths(realpath(dirname(__FILE__).str_repeat(DS.'..', 3).DS.'installer'.DS.'admin_files'));
         AkUnitTestSuite::cleanupTmpDir();
     }
 
     public function __destruct() {
         parent::__destruct();
-        AkConfig::setDir('fixtures', $this->_original_fixtures);
         AkUnitTestSuite::cleanupTmpDir();
         $this->dropTables('all');
     }

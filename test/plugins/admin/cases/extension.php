@@ -1,16 +1,20 @@
 <?php
 
-include_once dirname(__FILE__).'/../../config.php';
+include_once dirname(__FILE__).'/../config.php';
 
 class ExtensionTestCase extends AdminPluginUnitTest
 {
-    public $module = 'admin';
     public $insert_models_data = true;
 
     public function test_setup() {
+        $original_fixtures = AkConfig::getDir('fixtures');
+        AkConfig::setDir('fixtures', AkConfig::getDir('suite').DS.'fixtures');
+
         $this->uninstallAndInstallMigration('AdminPlugin');
         $this->Extension = new Extension();
         $this->populateTables('extensions');
+
+        AkConfig::setDir('fixtures', $original_fixtures);
     }
 
     public function test_should_disable_enabled_extension() {

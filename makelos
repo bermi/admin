@@ -1,61 +1,32 @@
 #!/usr/bin/env php
 <?php
 
-array_shift($argv);
-defined('DS') ? null : define('DS', DIRECTORY_SEPARATOR);
+// define('AK_BASE_DIR', '/path/to/an/akelos/app');
 
-$task = empty($argv) ? false : array_shift($argv);
-$task = !in_array($task,get_class_methods('Makelos')) ? 'help' : $task;
+defined('DS') || define('DS', DIRECTORY_SEPARATOR);
 
-include(dirname(__FILE__).str_repeat(DS.'..', 4).DS.'config'.DS.'config.php');
-
-class Makelos
-{
-    public $repository = 'http://svn.akelos.org/plugins/admin';
-
-    public function help() {
-        echo "\nValid commands are ".join(', ', get_class_methods('Makelos'))."\n";
-    }
-
-    public function test($options = array()) {
-        system('/usr/bin/env php '.dirname(__FILE__).'/test/admin.php');
-    }
-
-    public function install() {
-        $Installer =& $this->_getInstaller();
-        $Installer->install();
-    }
-
-    public function uninstall() {
-        $Installer =& $this->_getInstaller();
-        $Installer->uninstall();
-    }
-
-    public function &_getInstaller() {
-        require_once(dirname(__FILE__).DS.'installer'.DS.'admin_installer.php');
-        $Installer = new AdminInstaller();
-        return $Installer;
-    }
-
-    public function connectToDatabase($database_settings) {
-        $this->_includeDependencies();
-        Ak::db($database_settings[AK_ENVIRONMENT]);
+if(!defined('AK_BASE_DIR')){
+    $base_dir = realpath(dirname(__FILE__).str_repeat(DS.'..', 5));
+    if(!is_dir($base_dir.'test'.DS.'shared')){
+        $akelos_version = trim(@`akelos -v`);
+        if(version_compare($akelos_version, '1.0', '>=')){
+            $base_dir = trim(@`akelos --base_dir`);
+        }
     }
     
-    public function _includeDependencies() {
-        require_once(AK_LIB_DIR.DS.'Ak.php');
-        require_once(AK_LIB_DIR.DS.'AkObject.php');
-        require_once(AK_LIB_DIR.DS.'AkInflector.php');
-        require_once(AK_LIB_DIR.DS.'AkPlugin.php');
-        require_once(AK_LIB_DIR.DS.'AkPlugin/AkPluginManager.php');
-        require_once(AK_LIB_DIR.DS.'AkInstaller.php');
-        require_once(AK_LIB_DIR.DS.'utils'.DS.'generators'.DS.'AkelosGenerator.php');
+    define('AK_BASE_DIR', $base_dir);
+    $makelos_file = AK_BASE_DIR.DS.'vendor'.DS.'akelos'.DS.'makelos'.DS.'makelos.php';
+    if(!file_exists($makelos_file)){
+        die("Could not find Akelos base path. Please edit ".__FILE__."\n");
     }
 }
 
-$Makelos = new Makelos();
-$Makelos->connectToDatabase(@$database_settings);
-$Makelos->$task(@$argv);
+defined('AK_FRAMEWORK_DIR')     || define('AK_FRAMEWORK_DIR',       AK_BASE_DIR.DS.'vendor'.DS.'akelos');
+define('MAKELOS_BASE_DIR', dirname(__FILE__));
+defined('AK_TEST_DIR') || define('AK_TEST_DIR', MAKELOS_BASE_DIR.DS.'test');
+define('AK_TESTING_NAMESPACE', 'plugins');
 
+$GLOBALS['argv'][] = '--component=plugins';
 
-?>
+include AK_FRAMEWORK_DIR.DS.'makelos'.DS.'makelos.php';
+

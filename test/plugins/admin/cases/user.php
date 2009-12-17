@@ -1,6 +1,6 @@
 <?php
 
-include_once dirname(__FILE__).'/../../config.php';
+include_once dirname(__FILE__).'/../config.php';
 
 class UserTestCase extends AdminPluginUnitTest
 {
@@ -11,7 +11,7 @@ class UserTestCase extends AdminPluginUnitTest
     public function __construct(){
         parent::__construct();       
         AkConfig::setOption('test_mode_settings_namespace', 'admin_testing');
-        $config_file = realpath(AkConfig::getDir('suite').DS.'..'.DS.'installer'.DS.'admin_files'.DS.'config').DS.'admin.yml';
+        $config_file = realpath(AkConfig::getDir('suite').DS.'..'.DS.'..'.DS.'..'.DS.'installer'.DS.'admin_files'.DS.'config').DS.'admin.yml';
         copy($config_file, AkConfig::getDir('config').DS.'admin_testing.yml');
     }
 
