@@ -1,6 +1,8 @@
 <?php
 
-class RoleTestCase extends AkUnitTest
+include_once dirname(__FILE__).'/../../config.php';
+
+class RoleTestCase extends AdminPluginUnitTest
 {
     public $module = 'admin';
 
@@ -116,3 +118,6 @@ class RoleTestCase extends AkUnitTest
     }
 
 }
+
+ak_test_case('RoleTestCase');
+

@@ -1,26 +1,18 @@
 <?php
 
-
-defined('AK_DEFAULT_USER_ROLE') ? null : define('AK_DEFAULT_USER_ROLE', 'Registered user');
-defined('AK_DEFAULT_ADMIN_SETTINGS') ? null : define('AK_DEFAULT_ADMIN_SETTINGS', 'admin');
+defined('AK_DEFAULT_USER_ROLE')     || define('AK_DEFAULT_USER_ROLE', 'Registered user');
+defined('AK_DEFAULT_ADMIN_SETTINGS')|| define('AK_DEFAULT_ADMIN_SETTINGS', 'admin');
 
 class User extends ActiveRecord
 {
     public $habtm = array('roles' => array('unique'=>true, 'foreign_key'=>'user_id'));
+    
+    private $__initial_attributes = array();
+    private $__requires_password_confirmation = true;
 
-    /**
-     * @access private
-     */
-    public $__initial_attributes = array();
-    public $__requires_password_confirmation = true;
-
-    /**
-     * We need to get initial values when instantiating to know if attributes like password have been changed
-     */
-    public function __construct() {
-        $attributes = (array)func_get_args();
-        $this->__initial_attributes = isset($attributes[1]) && is_array($attributes[1]) ? $attributes[1] : array();
-        return $this->init($attributes);
+    public function beforeInstantiate(&$attributes = array()){
+        $this->__initial_attributes = $attributes;
+        return true;
     }
 
     /**
@@ -30,12 +22,13 @@ class User extends ActiveRecord
      * @param string $password
      * @return False if not found or not enabled, User instance if succedes
      */
-    public function authenticate($login, $password) {
+    static function authenticate($login, $password) {
         $UserInstance = new User();
 
         $login_or_email = preg_match(AK_EMAIL_REGULAR_EXPRESSION, $login) ? 'email' : 'login';
 
-        if($User = $UserInstance->find('first', array('conditions'=>array($login_or_email.' = ? AND __owner.is_enabled = ? AND _roles.is_enabled = ?', $login, true, true), 'include'=>'role')) && $User->isValidPassword($password)){
+        if(($User = $UserInstance->find('first', array('conditions'=>array($login_or_email.' = ? AND __owner.is_enabled = ? AND _roles.is_enabled = ?', $login, true, true), 'include'=>'role'))) 
+            && $User->isValidPassword($password)){
             $User->set('last_login_at', Ak::getDate());
             $User->save();
             return $User;
@@ -58,7 +51,7 @@ class User extends ActiveRecord
     }
 
     public function setDefaultRole() {
-        $settings = Ak::getSettings(AK_DEFAULT_ADMIN_SETTINGS);
+        $settings = Ak::getSettings(self::getSettingsNamespace());
         if(!empty($settings['account_settings']['default_role'])){
             $this->role->load();
             $Role = new Role();
@@ -67,7 +60,7 @@ class User extends ActiveRecord
             }
         }
     }
-
+    
     public function sendSignupMessage($options = array()) {
         $default_options = array(
         'signup_message' => 'registration_details'
@@ -237,12 +230,12 @@ class User extends ActiveRecord
         $options['expires'] = empty($options['expires']) ? 0 : Ak::getTimestamp()+((empty($options['expires']) ? '0' : ($options['expires'] === true ? 86400 : $options['expires'])));
         $options['single_use'] = $options['single_use'] ? 1 : 0;
 
-        $options['hash'] = $this->_getTokenHash($options);
+        $options['hash'] = $this->getTokenHash($options);
 
-        return $this->_encodeToken($options);
+        return self::encodeToken($options);
     }
 
-    public function _getTokenHash($options) {
+    public function getTokenHash($options) {
         return md5($this->get('id').
         $this->get('email').
         $this->get('login').
@@ -259,8 +252,8 @@ class User extends ActiveRecord
      * @param array $options token options
      * @return string Url ready authentication Token
      */
-    public function _encodeToken($options) {
-        return base64_encode(Ak::blowfishEncrypt(Ak::toJson($options), Ak::getSetting(AK_DEFAULT_ADMIN_SETTINGS, 'token_key')));
+    static function encodeToken($options) {
+        return base64_encode(Ak::blowfishEncrypt(Ak::toJson($options), Ak::getSetting(self::getSettingsNamespace(), 'token_key')));
     }
 
     /**
@@ -270,8 +263,14 @@ class User extends ActiveRecord
      * @param bool $url_decode should it URL decode the token true by default
      * @return array Array of options for the authentication token
      */
-    public function _decodeToken($token) {
-        return (array)Ak::fromJson(Ak::blowfishDecrypt(base64_decode($token), Ak::getSetting(AK_DEFAULT_ADMIN_SETTINGS, 'token_key')));
+    static function decodeToken($token) {
+        return (array)Ak::fromJson(Ak::blowfishDecrypt(base64_decode($token), Ak::getSetting(self::getSettingsNamespace(), 'token_key')));
+    }
+    
+    static function getSettingsNamespace(){
+        return AK_TEST_MODE ?  
+        AkConfig::getOption('test_mode_settings_namespace', AK_DEFAULT_ADMIN_SETTINGS) : 
+        AK_DEFAULT_ADMIN_SETTINGS;
     }
 
 
@@ -351,7 +350,7 @@ class User extends ActiveRecord
         return isset($this->roles[0]) ? $this->roles[0]->nested_set->isRoot() : false;
     }
 
-    public function _addRootPermission($task, $extension_id) {
+    protected function _addRootPermission($task, $extension_id) {
         if($this->hasRootPrivileges()){
             $Permission = new Permission();
             $Permission = $Permission->findOrCreateBy('name AND extension_id', $task, $extension_id);
@@ -361,7 +360,7 @@ class User extends ActiveRecord
         return false;
     }
 
-    public function _getExtensionId($extension, $force_reload = false) {
+    protected function _getExtensionId($extension, $force_reload = false) {
         static $extenssion_ids = array();
         if(is_string($extension) && !is_numeric($extension)){
             if(isset($extenssion_ids[$extension]) && $force_reload == false){
@@ -377,14 +376,14 @@ class User extends ActiveRecord
         return $extension;
     }
 
-
+    
     /**
      * Returns the current user if it is set, otherwise throws an error
      * 
      * @see isLoaded() to check before and not throw an error
      * @return User
      */
-    public function getCurrentUser() {
+    static function getCurrentUser() {
         $User = Ak::getStaticVar('CurrentUser');
         if (empty($User)) {
             trigger_error(Ak::t('Current user has not been set yet.'), E_USER_ERROR);
@@ -396,7 +395,7 @@ class User extends ActiveRecord
      *
      * @return boolean
      */
-    public function isLoaded() {
+    static function isLoaded() {
         return Ak::getStaticVar('CurrentUser') != null;
     }
 
@@ -405,12 +404,11 @@ class User extends ActiveRecord
      *
      * @param User $CurrentUser
      */
-    public function setCurrentUser($CurrentUser) {
-        Ak::_staticVar('CurrentUser', $CurrentUser);
+    static function setCurrentUser($CurrentUser) {
+        Ak::setStaticVar('CurrentUser', $CurrentUser);
     }
 
-
-    public function unsetCurrentUser() {
+    static function unsetCurrentUser() {
         User::setCurrentUser(null);
     }
 }

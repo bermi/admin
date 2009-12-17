@@ -1,12 +1,10 @@
 <?php 
 
-
 class RoleUser extends ActiveRecord 
 {
     public $_avoidTableNameValidation = true;
     
-    public function RoleUser() {
-        $this->setModelName("RoleUser");
+    public function __construct() {
         $attributes = (array)func_get_args();
         $this->setTableName('roles_users', true, true);
         $this->init($attributes);

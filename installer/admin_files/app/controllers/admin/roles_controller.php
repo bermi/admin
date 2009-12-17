@@ -60,7 +60,7 @@ class Admin_RolesController extends AdminController
         }
     }
 
-    public function _addOrEditRole($action) {
+    protected function _addOrEditRole($action) {
         $this->role->setAttributes(Ak::pick('name,description,is_enabled', $this->params['role']));
         if ($this->role->save()){
             $this->flash_options = array('seconds_to_close' => 10);

@@ -1,6 +1,6 @@
 <?php
 
-defined('AK_EXTENSION_DIR') ? null : define('AK_EXTENSION_DIR', AK_APP_DIR.DS.'extensions');
+defined('AK_EXTENSION_DIR') || define('AK_EXTENSION_DIR', AK_APP_DIR.DS.'extensions');
 
 class Extension extends ActiveRecord
 {
@@ -30,7 +30,7 @@ class Extension extends ActiveRecord
     }
 
     public function getExtensionsBasePath() {
-        return AK_EXTENSION_DIR;
+        return AkConfig::getDir('extension');
     }
 
     public function getExtensionPath() {
@@ -43,7 +43,7 @@ class Extension extends ActiveRecord
         return $path && file_exists($path) ? $path : false;
     }
 
-    public function _installOrUninstallExtension($action = 'install') {
+    protected function _installOrUninstallExtension($action = 'install') {
         if($installer_path = $this->getInstallerPath()){
             include_once($installer_path);
             $installer_class_name = AkInflector::camelize($this->get('name')).'ExtensionInstaller';

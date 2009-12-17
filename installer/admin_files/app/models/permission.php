@@ -10,6 +10,5 @@ class Permission extends ActiveRecord
     public function validate() {
         $this->validatesUniquenessOf('name', array('scope' => 'extension_id'));
     }
-    
 }
 

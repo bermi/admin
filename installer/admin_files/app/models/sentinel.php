@@ -53,8 +53,8 @@ class Sentinel
         return $result;
     }
 
-    public function authenticateWithToken($token) {
-        $options = User::_decodeToken($token);
+    static function authenticateWithToken($token) {
+        $options = User::decodeToken($token);
         
         if(!empty($options) && !empty($options['hash']) && !empty($options['id'])){
             $User = new User();
@@ -62,7 +62,7 @@ class Sentinel
             if(!empty($options['expires']) && $options['expires'] < Ak::getTimestamp()){
                 return false;
             }
-            if($options['hash'] == $User->_getTokenHash($options)){
+            if($options['hash'] == $User->getTokenHash($options)){
 
                 $User->updateAttribute('last_login_at', Ak::getDate());
 
@@ -164,7 +164,6 @@ class Sentinel
         return preg_match('/Mozilla|MSIE|Gecko|Opera/i',@$this->Controller->Request->env['HTTP_USER_AGENT']);
     }
 
-
     public function getCredentialsRenewalUrl($User) {
         if($User){
             return $this->Controller->urlFor(array(
@@ -187,6 +186,5 @@ class Sentinel
         }
         return false;
     }
-
 }
 

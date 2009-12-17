@@ -85,4 +85,3 @@ class AccountController extends ApplicationController
     }
 }
 
-?>

@@ -4,7 +4,7 @@ class AdminController extends ApplicationController
 {
     public $app_models = array('user','role','permission','extension');
     public $protect_all_actions = true;
-    //var $protected_actions = 'index,show,edit,delete'; // You can protect individual actions
+    //public $protected_actions = 'index,show,edit,delete'; // You can protect individual actions
 
     public $admin_menu_options = array();
     public $controller_menu_options = array();
@@ -34,7 +34,7 @@ class AdminController extends ApplicationController
         exit;
     }
 
-    public function _protectAction() {
+    protected function _protectAction() {
         $protected_actions = Ak::toArray($this->protected_actions);
         $action_name = $this->getActionName();
         if(in_array($action_name, $protected_actions) && !$this->CurrentUser->can($action_name.' action', 'Admin::'.$this->getControllerName())){
@@ -42,13 +42,13 @@ class AdminController extends ApplicationController
         }
     }
 
-    public function _protectAllActions() {
+    protected function _protectAllActions() {
         if(!$this->CurrentUser->can($this->getActionName().' action', 'Admin::'.$this->getControllerName())){
             $this->redirectTo(array('action'=>'action_privileges_error', 'controller'=>'dashboard'));
         }
     }
 
-    public function _loadCurrentUserRoles() {
+    protected function _loadCurrentUserRoles() {
         $this->Roles = $this->CurrentUser->getRoles();
         if (empty($this->Roles)){
             $this->flash['notice'] = $this->t('It seems like you don\'t have Roles on your site. Please fill in the form below in order to create your first role.');

@@ -73,7 +73,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    public function _addOrEdit() {
+    protected function _addOrEdit() {
         $this->_protectUserFromBeingModified();
         if ($this->Request->isPost() && !empty($this->params['user'])){
             $this->User->setAttributes($this->params['user']);
@@ -99,7 +99,7 @@ class Admin_UsersController extends AdminController
         }
     }
 
-    public function _protectUserFromBeingModified() {
+    protected function _protectUserFromBeingModified() {
         $self_editing = $this->User->getId() == $this->CurrentUser->getId();
         if($this->User->isNewRecord()){
             return ;

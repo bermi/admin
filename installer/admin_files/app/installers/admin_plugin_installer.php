@@ -29,7 +29,7 @@ class AdminPluginInstaller extends AkInstaller
         $this->createTable('permissions', 'id, name, extension_id');
 
         if(AK_ENVIRONMENT != 'testing' && empty($this->root_details)){
-        $this->root_details = array(
+            $this->root_details = array(
                 'login' => $this->promptUserVar('Master account login.',  array('default'=>'admin')),
                 'email' => $this->promptUserVar('Master account email.',  array('default'=>'root@example.com')),
                 'password' => $this->promptUserVar('Root password.', array('default'=>'admin')),

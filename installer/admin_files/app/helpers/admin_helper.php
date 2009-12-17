@@ -3,7 +3,7 @@
 class AdminHelper extends AkActionViewHelper
 {
     public function admin_menu() {
-        return $this->_render_menu('admin');
+        return $this->_renderMenu('admin');
     }
 
     public function can($task, $extension = null, $force_reload = false) {
@@ -11,7 +11,7 @@ class AdminHelper extends AkActionViewHelper
     }
 
     public function controller_menu() {
-        return $this->_render_menu('controller');
+        return $this->_renderMenu('controller');
     }
 
     public function user_menu() {
@@ -24,7 +24,7 @@ class AdminHelper extends AkActionViewHelper
         }
     }
 
-    public function _getMenuOptions($type = 'admin') {
+    protected function _getMenuOptions($type = 'admin') {
         if($type == 'admin'){
             return array_merge($this->_getDefaultOptions($type), (!empty($this->_controller->{"{$type}_menu_options"}) ?$this->_controller->{"{$type}_menu_options"} : array()));
         }else{
@@ -33,7 +33,7 @@ class AdminHelper extends AkActionViewHelper
 
     }
 
-    public function _getDefaultOptions($type = 'admin') {
+    protected function _getDefaultOptions($type = 'admin') {
         if(!empty($this->_controller->{"default_{$type}_menu_options"})){
             return $this->_controller->{"default_{$type}_menu_options"};
         }elseif (!empty($this->_controller->{"_{$type}_menu_options"})){
@@ -45,12 +45,11 @@ class AdminHelper extends AkActionViewHelper
         }
     }
 
-    public function _getMenuOptionsFile($type = 'admin') {
+    protected function _getMenuOptionsFile($type = 'admin') {
         return ltrim($this->_controller->getModuleName()."_{$type}_menu.yml", '/');
     }
-    //
 
-    public function _getMenuOptionsForControllersInModule($type = 'admin') {
+    protected function _getMenuOptionsForControllersInModule($type = 'admin') {
         $controllers = (Ak::dir(AK_CONTROLLERS_DIR.DS.$this->_controller->getModuleName(), array('dirs'=>false)));
         sort($controllers);
         $menu_options = array();
@@ -65,7 +64,7 @@ class AdminHelper extends AkActionViewHelper
         return $menu_options;
     }
 
-    public function _render_menu($type) {
+    protected function _renderMenu($type) {
         $controller = $this->_controller;
         $current_controller = AkInflector::urlize($controller->getControllerName());
         $current_action = !empty($controller->params['action'])?$controller->params['action']:'';

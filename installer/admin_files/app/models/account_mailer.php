@@ -22,7 +22,6 @@ class AccountMailer extends AkActionMailer
         );
     }
 
-
     public function password_reminder($recipient) {
         $this->recipients =  array($recipient);
         $this->subject    = "[{$this->_settings['application_name']}] ".$this->t('Password reminder');
@@ -47,6 +46,5 @@ class AccountMailer extends AkActionMailer
         $settings['base_url'] = isset($settings['base_url']) ? $settings['base_url'] : true;
         return $this->urlFor($settings['sign_in_url']);
     }
-
 }
 

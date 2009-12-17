@@ -1,13 +1,14 @@
 <?php
 
-class ExtensionTestCase extends AkUnitTest
+include_once dirname(__FILE__).'/../../config.php';
+
+class ExtensionTestCase extends AdminPluginUnitTest
 {
     public $module = 'admin';
     public $insert_models_data = true;
 
     public function test_setup() {
         $this->uninstallAndInstallMigration('AdminPlugin');
-        Ak::import('extension');
         $this->Extension = new Extension();
         $this->populateTables('extensions');
     }
@@ -48,6 +49,6 @@ class ExtensionTestCase extends AkUnitTest
         $this->assertEqual(count($Page->permissions), 1);
         $this->assertEqual($Page->permissions[0]->get('name'), 'Create pages');
     }
-
 }
 
+ak_test_case('ExtensionTestCase');

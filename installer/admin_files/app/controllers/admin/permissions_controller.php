@@ -42,7 +42,7 @@ class Admin_PermissionsController extends AdminController
         }
     }
 
-    public function _updatePermissions() {
+    protected function _updatePermissions() {
         foreach ($this->params['permissions'] as $permission_id=>$roles) {
             $role_ids = array_keys(array_diff($roles, array('')));
             $Permission = $this->Permission->find($permission_id, array('include'=>'roles'));
@@ -51,7 +51,7 @@ class Admin_PermissionsController extends AdminController
         }
     }
 
-    public function _loadPermissionsAndExtensions() {
+    protected function _loadPermissionsAndExtensions() {
         $this->Permissions = $this->role->getPermissions();
         $this->Extensions = $this->Extension->find('all', array('include'=>'permissions', 'sort'=>'__owner.name ASC, _permissions.name ASC'));
     }
