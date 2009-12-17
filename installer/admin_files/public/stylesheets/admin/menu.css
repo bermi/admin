@@ -1,0 +1,85 @@
+#menu{
+  background:#0cf url('/images/admin/bg_menu.png') 0 -136px repeat-x;
+  height:80px;
+  margin:20px 0;
+}
+
+#menu.simple{
+  height:24px;
+}
+
+#admin_menu li{
+  float:left;
+  height:24px;
+  border-right:1px solid #59d;
+}
+
+#admin_menu a,#admin_menu a:link,#admin_menu a:hover,#admin_menu a:visited{
+  color:#fff;
+  font-weight:bold;
+  display:block;
+  padding:4px 15px 5px 15px;
+}
+
+
+#admin_menu a:hover{
+  background:transparent url('/images/admin/bg_menu.png') 0 -34px repeat-x;
+}
+
+#admin_menu li.active,#admin_menu li.active a:hover{
+  background:transparent url('/images/admin/bg_menu.png') 0 -68px repeat-x;
+}
+
+
+#menu h2{
+  clear:both;
+  font-size:16px;
+  padding:6px 10px;
+}
+
+
+#controller_menu{
+  margin:0 10px;
+}
+
+#controller_menu li{
+  float:left;
+  height:25px;
+  margin:0 2px;
+  font-size:0.95em;
+}
+
+#controller_menu li a,
+#controller_menu li a:link,
+#controller_menu li a:visited{
+  display:block;
+  padding:5px 12px 0 12px;
+  color:#06C;
+  text-decoration:underline;
+}
+
+#controller_menu li a:hover{
+  color:#C60;
+}
+
+#controller_menu li.active a,
+#controller_menu li.active a:link,
+#controller_menu li.active a:visited,
+#controller_menu li.active a:hover{
+  color:#333;
+  text-decoration:none;
+}
+
+
+#controller_menu li.active{
+  background-color:#fff;
+  border:1px solid #C6DFF9;
+  border-bottom:none;
+}
+
+
+#controller_menu li.active{
+  font-weight:bold;
+}
+
+

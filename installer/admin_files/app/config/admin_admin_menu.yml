@@ -1,0 +1,18 @@
+---
+default: 
+  Dashboard: 
+    id: dashboard
+    url: 
+      controller: dashboard
+    link_options: 
+      accesskey: h
+      title: general status and information
+  Manage Users: 
+    id: users
+    url: 
+      controller: users
+    link_options: 
+      accesskey: u
+      title: >
+        add user, change password, manage user
+        settings

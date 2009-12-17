@@ -1,0 +1,5 @@
+Submit your contributions to http://trac.akelos.org
+
+* Implement simple and flexible user details system.
+* Implement Simple user preferences system.
+* Stop adding features :), you might want to fork the plugin at this point as the official plugin is just bare-bone system which needs  to be simple to extend and maintain.

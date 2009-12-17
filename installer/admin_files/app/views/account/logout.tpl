@@ -1,0 +1,1 @@
+<p><%= link_to _'Sign in again', settings-sign_in_url %></p>

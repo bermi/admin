@@ -1,0 +1,11 @@
+-
+  name: admin
+  description: Administration interface
+  is_core: true
+  is_enabled: true
+-
+  name: page
+  description: Page management
+  is_core: false
+  is_enabled: true
+
