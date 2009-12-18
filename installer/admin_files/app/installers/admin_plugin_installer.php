@@ -2,7 +2,11 @@
 
 class AdminPluginInstaller extends AkInstaller
 {
+    
     public function up_1() {
+        
+        self::setTokenKey();     
+        
         $this->createTable('users', '
           id,
           login string(40) not null idx,
@@ -91,5 +95,15 @@ class AdminPluginInstaller extends AkInstaller
         $ApplicationOwner->role->add($Role->findFirstBy('name', 'Application owner'));
         $ApplicationOwner->save();
     }
+    
+
+    static function setTokenKey($key = null){
+        $key = empty($key) ? Ak::uuid() : $key;
+        $yml_path = realpath(AkConfig::getDir('app').DS.'../config').DS.'admin.yml';
+        $admin_yml = file_get_contents($yml_path);
+        $admin_yml = preg_replace('/token_key: ([\w\d-,\. ]+)/i', 'token_key: '.$key, $admin_yml);
+        file_put_contents($yml_path, $admin_yml);
+    }
+    
 }
 

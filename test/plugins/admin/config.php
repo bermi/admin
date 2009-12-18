@@ -31,6 +31,7 @@ class AdminPluginUnitTest extends AkUnitTest
     }
 
     public function __destruct() {
+        AdminPluginInstaller::setTokenKey('some long and random secret value to avoid being hacked, used for login urls and API calls');
         parent::__destruct();
         AkUnitTestSuite::cleanupTmpDir();
         $this->dropTables('all');
