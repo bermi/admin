@@ -10,6 +10,7 @@ class AdminController extends ApplicationController
     public $controller_menu_options = array();
 
     public function __construct() {
+        parent::init();
         $this->beforeFilter('load_settings');
         $this->beforeFilter('authenticate');
         !empty($this->protected_actions) ? $this->beforeFilter('_protectAction') : null;
@@ -22,7 +23,6 @@ class AdminController extends ApplicationController
     }
 
     public function authenticate() {
-        Ak::import('sentinel');
         $Sentinel = new Sentinel();
         $Sentinel->init($this);
         return $Sentinel->authenticate();
@@ -34,7 +34,7 @@ class AdminController extends ApplicationController
         exit;
     }
 
-    protected function _protectAction() {
+    public function protectAction() {
         $protected_actions = Ak::toArray($this->protected_actions);
         $action_name = $this->getActionName();
         if(in_array($action_name, $protected_actions) && !$this->CurrentUser->can($action_name.' action', 'Admin::'.$this->getControllerName())){
@@ -42,7 +42,7 @@ class AdminController extends ApplicationController
         }
     }
 
-    protected function _protectAllActions() {
+    public function protectAllActions() {
         if(!$this->CurrentUser->can($this->getActionName().' action', 'Admin::'.$this->getControllerName())){
             $this->redirectTo(array('action'=>'action_privileges_error', 'controller'=>'dashboard'));
         }

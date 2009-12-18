@@ -18,19 +18,19 @@ class RoleHelper extends AkActionViewHelper
     }
 
     public function link_to_show(&$record) {
-        if(User::can('show action', 'Admin::Roles')){
+        if(User::currentUserCan('show action', 'Admin::Roles')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Show'), array('action' => 'show', 'id' => $record->getId()), array('class'=>'action'));
         }
     }
 
     public function link_to_edit(&$record) {
-        if(User::can('edit action', 'Admin::Roles')){
+        if(User::currentUserCan('edit action', 'Admin::Roles')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Edit'), array('action' => 'edit', 'id' => $record->getId()), array('class'=>'action'));
         }
     }
 
     public function link_to_destroy(&$record) {
-        if(User::can('destroy action', 'Admin::Roles')){
+        if(User::currentUserCan('destroy action', 'Admin::Roles')){
             return $this->_controller->url_helper->link_to($this->_controller->t('Delete'), array('action' => 'destroy', 'id' => $record->getId()), array('class'=>'action'));
         }
     }

@@ -22,7 +22,7 @@ class PermissionHelper extends AkActionViewHelper
     }
 
     public function link_to_destroy(&$record) {
-        if(AK_DEV_MODE && User::can('destroy action', 'Admin::Permissions')){
+        if(AK_DEV_MODE && User::currentUserCan('destroy action', 'Admin::Permissions')){
             return $this->_controller->url_helper->link_to($this->_controller->t('delete'), array('action' => 'destroy', 'id' => $record->getId()), array('class'=>'seccondary'));
         }
     }

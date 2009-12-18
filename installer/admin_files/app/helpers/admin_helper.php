@@ -7,7 +7,7 @@ class AdminHelper extends AkActionViewHelper
     }
 
     public function can($task, $extension = null, $force_reload = false) {
-        return User::can($task, $extension, $force_reload);
+        return User::currentUserCan($task, $extension, $force_reload);
     }
 
     public function controller_menu() {
@@ -24,7 +24,7 @@ class AdminHelper extends AkActionViewHelper
         }
     }
 
-    protected function _getMenuOptions($type = 'admin') {
+    public function _getMenuOptions($type = 'admin') {
         if($type == 'admin'){
             return array_merge($this->_getDefaultOptions($type), (!empty($this->_controller->{"{$type}_menu_options"}) ?$this->_controller->{"{$type}_menu_options"} : array()));
         }else{
@@ -33,7 +33,7 @@ class AdminHelper extends AkActionViewHelper
 
     }
 
-    protected function _getDefaultOptions($type = 'admin') {
+    public function _getDefaultOptions($type = 'admin') {
         if(!empty($this->_controller->{"default_{$type}_menu_options"})){
             return $this->_controller->{"default_{$type}_menu_options"};
         }elseif (!empty($this->_controller->{"_{$type}_menu_options"})){
@@ -45,11 +45,11 @@ class AdminHelper extends AkActionViewHelper
         }
     }
 
-    protected function _getMenuOptionsFile($type = 'admin') {
+    public function _getMenuOptionsFile($type = 'admin') {
         return ltrim($this->_controller->getModuleName()."_{$type}_menu.yml", '/');
     }
 
-    protected function _getMenuOptionsForControllersInModule($type = 'admin') {
+    public function _getMenuOptionsForControllersInModule($type = 'admin') {
         $controllers = (Ak::dir(AK_CONTROLLERS_DIR.DS.$this->_controller->getModuleName(), array('dirs'=>false)));
         sort($controllers);
         $menu_options = array();
@@ -64,7 +64,7 @@ class AdminHelper extends AkActionViewHelper
         return $menu_options;
     }
 
-    protected function _renderMenu($type) {
+    public function _renderMenu($type) {
         $controller = $this->_controller;
         $current_controller = AkInflector::urlize($controller->getControllerName());
         $current_action = !empty($controller->params['action'])?$controller->params['action']:'';

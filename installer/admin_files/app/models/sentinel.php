@@ -11,32 +11,38 @@ class Sentinel
 
     public function init(&$Controller) {
         $this->Controller = $Controller;
-        $this->Session = $this->Controller->Request->getSession();
+        $this->Session =& $this->Controller->Request->getSession();
     }
 
     public function authenticate() {
+        $restore = false;
         $this->saveOriginalRequest();
         if(!$User = $this->getUserFromSession()){
             if($User = $this->getAuthenticatedUser()){
-                $this->restoreOriginalRequest();
+                $restore = true;
             }
         }
-
         if($User){
             $this->setCurrentUser($User);
         }
+        if($restore){
+            $this->restoreOriginalRequest();
+        }
         return $User;
     }
+
+
 
     public function getAuthenticatedUser() {
         return $this->{$this->getAuthenticationMethod()}();
     }
 
     public function getAuthenticationMethod() {
-        if(!empty($this->Controller->params['ak_login']) || $this->shouldDefaultToPostAuthentication()){
+        if(!empty($this->Controller->params['ak_token'])) {
+            return 'authenticateUsingToken';
+        } elseif(!empty($this->Controller->params['ak_login']) || $this->shouldDefaultToPostAuthentication()){
             return 'authenticateUsingPostedVars';
         }
-
         return 'authenticateUsingHttpBasic';
     }
 
@@ -53,9 +59,13 @@ class Sentinel
         return $result;
     }
 
-    static function authenticateWithToken($token) {
+
+    public function authenticateUsingToken(){
+        return $this->authenticateWithToken(@$this->Controller->params['ak_token']);
+    }
+
+    public function authenticateWithToken($token, $update_last_login = true) {
         $options = User::decodeToken($token);
-        
         if(!empty($options) && !empty($options['hash']) && !empty($options['id'])){
             $User = new User();
             $User = $User->find($options['id']);
@@ -63,9 +73,10 @@ class Sentinel
                 return false;
             }
             if($options['hash'] == $User->getTokenHash($options)){
-
-                $User->updateAttribute('last_login_at', Ak::getDate());
-
+                if($update_last_login){
+                    $User->updateAttribute('last_login_at', Ak::getDate());
+                }
+                $this->setCurrentUser($User);
                 return $User;
             }
         }
@@ -75,15 +86,16 @@ class Sentinel
 
     public function saveOriginalRequest($force = false) {
         if(empty($this->Session['__OriginalRequest']) || $force){
-            $this->Session['__OriginalRequest'] = serialize($this->Controller->Request);
+            $this->Session['__OriginalRequest'] =  AK_CURRENT_URL;
         }
     }
 
     public function restoreOriginalRequest() {
         if(!empty($this->Session['__OriginalRequest'])){
-            $this->Controller->Request = unserialize($this->Session['__OriginalRequest']);
-            $this->Controller->params = $this->Controller->Request->getParams();
+            $url = $this->Session['__OriginalRequest'];
             unset($this->Session['__OriginalRequest']);
+            $this->Controller->redirectTo($url);
+            exit;
         }
     }
 
@@ -101,22 +113,29 @@ class Sentinel
         return !empty($this->Session['__current_user_id']);
     }
 
-    public function getUserFromSession() {
-        if ($this->hasUserOnSession()) {
-            $model = isset($this->Session['__CurrentUserType'])?$this->Session['__CurrentUserType']:'User';
-            Ak::import($model);
-            $UserInstance = new $model();
-            return $UserInstance->find($this->Session['__current_user_id'], array('include'=>'roles'));
+    public function getUserFromSession(){
+        if (!isset($this->Controller->params['ak_login']) && $this->hasUserOnSession()) {
+            $model_class = isset($this->Session['__CurrentUserType']) ? $this->Session['__CurrentUserType'] : 'User';
+            $UserInstance = new $model_class();
+            $finder_options = empty($this->Controller->user_finder_options) ? array('include'=>'roles') : $this->Controller->user_finder_options;
+            $User = $UserInstance->find($this->Session['__current_user_id'], $finder_options);
+            if($User){
+                $User->type = $model_class;
+            }
+            return $User;
         }
         return false;
     }
 
-    public function setCurrentUserOnSession($User, $force = false) {
-        if(!$this->hasUserOnSession() || $force){
-            $this->Session['__current_user_id'] = $User->getId();
-            $this->Session['__CurrentUserType'] = get_class($User);
+    public function setCurrentUserOnSession($User, $force = false){
+        if((!$this->hasUserOnSession() && empty($this->_authenticated_with_token)) || $force){
+            if ($User instanceof AkActiveRecord) {
+                $this->Session['__current_user_id'] = $User->getId();
+                $this->Session['__CurrentUserType'] = $User->getType();
+                return true;
+            }
         }
-
+        return $this->hasUserOnSession();
     }
 
     public function removeCurrentUserFromSession() {
@@ -155,7 +174,7 @@ class Sentinel
     public function shouldDefaultToPostAuthentication() {
         $settings = Ak::getSettings('admin');
         if(!empty($settings['default_authentication_method']) &&
-        $settings['default_authentication_method'] == 'post'){
+            $settings['default_authentication_method'] == 'post'){
             return $this->isWebBrowser();
         }
     }

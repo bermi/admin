@@ -24,9 +24,7 @@
     </div>
 </form>
 
-
-{?flash-error}                    
+                 
 <p id="password_reminder" class="notice">
     <%= link_to _'Forgot your user name or password?', :action => 'password_reminder' %>
 </p>
-{end}

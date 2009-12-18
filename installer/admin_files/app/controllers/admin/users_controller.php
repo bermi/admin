@@ -81,7 +81,7 @@ class Admin_UsersController extends AdminController
 
             if($this->User->save()){
 
-                if(User::can('Set roles', 'Admin::Users')){
+                if(User::currentUserCan('Set roles', 'Admin::Users')){
                     $posted_roles = array_diff($this->params['roles'], array(0));
                     if(!empty($posted_roles)){
                         $role_ids = array_intersect(array_keys($posted_roles),
@@ -103,10 +103,10 @@ class Admin_UsersController extends AdminController
         $self_editing = $this->User->getId() == $this->CurrentUser->getId();
         if($this->User->isNewRecord()){
             return ;
-        }elseif(!User::can('Set roles', 'Admin::Users') && $this->User->hasRootPrivileges() && !$self_editing){
+        }elseif(!User::currentUserCan('Set roles', 'Admin::Users') && $this->User->hasRootPrivileges() && !$self_editing){
             $this->flash['error'] = $this->t('You don\'t have the privileges to modify selected user.');
             $this->redirectToAction('listing');
-        }elseif (!$self_editing && !User::can('Edit other users', 'Admin::Users')){
+        }elseif (!$self_editing && !User::currentUserCan('Edit other users', 'Admin::Users')){
             $this->flash['error'] = $this->t('You can\' modify other users account.');
             $this->redirectToAction('listing');
         }

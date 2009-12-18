@@ -266,10 +266,10 @@ class User extends ActiveRecord
     static function decodeToken($token) {
         return (array)Ak::fromJson(Ak::blowfishDecrypt(base64_decode($token), Ak::getSetting(self::getSettingsNamespace(), 'token_key')));
     }
-    
+
     static function getSettingsNamespace(){
-        return AK_TEST_MODE ?  
-        AkConfig::getOption('test_mode_settings_namespace', AK_DEFAULT_ADMIN_SETTINGS) : 
+        return AK_TEST_MODE ?
+        AkConfig::getOption('test_mode_settings_namespace', AK_DEFAULT_ADMIN_SETTINGS) :
         AK_DEFAULT_ADMIN_SETTINGS;
     }
 
@@ -287,15 +287,17 @@ class User extends ActiveRecord
         return $Permissions;
     }
 
+    static function currentUserCan($task, $extension = null, $force_reload = false) {
+        if (User::isLoaded()) {
+            $User = User::getCurrentUser();
+            return $User->can($task, $extension, $force_reload);
+        }
+    }
+
     public function can($task, $extension = null, $force_reload = false) {
-        if(!isset($this->_activeRecordHasBeenInstantiated) || 
-            !in_array('User', array($this->getModelName(), $this->getParentModelName()))){
-            if (User::isLoaded()) {
-                $User = User::getCurrentUser();
-                return $User->can($task, $extension, $force_reload);
-            } else {
-                return false;
-            }
+        if(!isset($this->_activeRecordHasBeenInstantiated) ||
+        !in_array('User', array($this->getModelName(), $this->getParentModelName()))){
+            return self::currentUserCan();
         }
 
         static $Permissions;
@@ -311,10 +313,18 @@ class User extends ActiveRecord
         return (!empty($Permissions[$extension_id]) && in_array($task, $Permissions[$extension_id])) ? true : $this->_addRootPermission($task, $extension_id);
     }
 
-    public function hasRole($role_name, $force_reload = false) {
-        if(!isset($this->_activeRecordHasBeenInstantiated)){
+
+    static function currentUserHasRole($task, $extension = null, $force_reload = false) {
+        if (User::isLoaded()) {
             $User = User::getCurrentUser();
             return $User->hasRole($role_name, $force_reload);
+        }
+        return false;
+    }
+
+    public function hasRole($role_name, $force_reload = false) {
+        if(!isset($this->_activeRecordHasBeenInstantiated)){
+            return self::currentUserHasRole();
         }
         $role_name = strtolower($role_name);
         $Roles = $this->getRoles($force_reload);
@@ -367,7 +377,6 @@ class User extends ActiveRecord
                 return $extenssion_ids[$extension];
             }
             $extension_key = $extension;
-            Ak::import('Extension');
             $ExtensionInstance = new Extension();
             $extension = $ExtensionInstance->findOrCreateBy('name', $extension);
         }
@@ -405,7 +414,7 @@ class User extends ActiveRecord
      * @param User $CurrentUser
      */
     static function setCurrentUser($CurrentUser) {
-        Ak::setStaticVar('CurrentUser', $CurrentUser);
+        Ak::_staticVar('CurrentUser', $CurrentUser);
     }
 
     static function unsetCurrentUser() {
