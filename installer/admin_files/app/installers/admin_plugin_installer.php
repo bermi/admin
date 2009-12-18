@@ -1,11 +1,16 @@
 <?php
 
+defined('ADMIN_PLUGIN_RUNNING_ON_APPLICATION_SCOPE') ||
+define('ADMIN_PLUGIN_RUNNING_ON_APPLICATION_SCOPE', false);
+
 class AdminPluginInstaller extends AkInstaller
 {
     
     public function up_1() {
         
-        self::setTokenKey();     
+        if(!ADMIN_PLUGIN_RUNNING_ON_APPLICATION_SCOPE){
+            self::setTokenKey();
+        }
         
         $this->createTable('users', '
           id,
