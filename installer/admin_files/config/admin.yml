@@ -1,11 +1,11 @@
 default:
-    application_name: Akelos Application
+    application_name: Akelos Application (set me on config/admin.yml)
     http_auth_realm: Application Administration
     default_authentication_method: post
     token_key: some long and random secret value to avoid being hacked, used for login urls and API calls
     do_not_reply_email: do-not-reply@example.com
     account_settings:
-      allow_sign_up: false
+      allow_sign_up: true
       default_role: Registered user
     sign_in_url: 
       controller: account
