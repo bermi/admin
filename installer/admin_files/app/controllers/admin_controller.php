@@ -13,8 +13,8 @@ class AdminController extends ApplicationController
         parent::init();
         $this->beforeFilter('load_settings');
         $this->beforeFilter('authenticate');
-        !empty($this->protected_actions) ? $this->beforeFilter('_protectAction') : null;
-        !empty($this->protect_all_actions) ? $this->beforeFilter(array('_protectAllActions' => array('except'=>array('action_privileges_error', 'login')))) : null;
+        !empty($this->protected_actions) ? $this->beforeFilter('protectAction') : null;
+        !empty($this->protect_all_actions) ? $this->beforeFilter(array('protectAllActions' => array('except'=>array('action_privileges_error', 'login')))) : null;
     }
 
     public function load_settings() {
