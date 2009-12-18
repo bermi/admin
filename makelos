@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+define('MAKELOS_STANDALONE', true);
 // define('AK_BASE_DIR', '/path/to/an/akelos/app');
 
 defined('DS') || define('DS', DIRECTORY_SEPARATOR);
