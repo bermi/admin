@@ -5,6 +5,7 @@ define('ADMIN_PLUGIN_RUNNING_ON_APPLICATION_SCOPE', false);
 
 class AdminPluginInstaller extends AkInstaller
 {
+    public $skip_db_sql = true;
     
     public function up_1() {
         
