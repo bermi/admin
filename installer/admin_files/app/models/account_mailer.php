@@ -3,7 +3,7 @@
 class AccountMailer extends AkActionMailer
 {
     public $_password_reset_url;
-    public $delivery_method = 'smtp';
+    public $delivery_method = 'php'; // smtp, test
     public $locale_namespace = 'admin_plugin';
 
     public function __construct() {
