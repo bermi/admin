@@ -11,7 +11,6 @@ class AdminController extends ApplicationController
     public $controller_menu_options = array();
 
     public function __construct() {
-        parent::init();
         $this->beforeFilter('load_settings');
         $this->beforeFilter('authenticate');
         !empty($this->protected_actions) ? $this->beforeFilter('protectAction') : null;
