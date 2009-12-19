@@ -28,7 +28,7 @@
       <td class="field">{User.login}</td>
       <td class="field"><%= mail_to User.email %></td>
       <td class="field">{?User.is_enabled}_{active}{else}_{blocked}{end}</td>
-      <td class="field">{?User.last_login_at}<%= _("#{time_ago_in_words(User.last_login_at)} ago") %>{else}_{never}{end}</td>
+      <td class="field">{?User.last_login_at}<%= _("%time ago", {'%time' => time_ago_in_words(User.last_login_at)}) %>{else}_{never}{end}</td>
       <td class="field"><%= time_ago_in_words User.created_at %></td>
       <td class="field"><? if($User->role->load()) : ?>
                 {loop User.roles}

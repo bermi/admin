@@ -5,6 +5,7 @@ class AdminController extends ApplicationController
     public $app_models = array('user','role','permission','extension');
     public $protect_all_actions = true;
     //public $protected_actions = 'index,show,edit,delete'; // You can protect individual actions
+    public $locale_namespace = 'admin_plugin';
 
     public $admin_menu_options = array();
     public $controller_menu_options = array();

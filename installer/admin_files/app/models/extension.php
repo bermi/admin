@@ -5,6 +5,7 @@ defined('AK_EXTENSION_DIR') || define('AK_EXTENSION_DIR', AK_APP_DIR.DS.'extensi
 class Extension extends ActiveRecord
 {
     public $has_many = array('permissions');
+    public $locale_namespace = 'admin_plugin';
 
     public function validate() {
         $this->validatesUniquenessOf('name');

@@ -3,11 +3,13 @@
 /**
  * The Sentinel is the agent who controls the credentials in the admin plugin.
  */
-class Sentinel
+class Sentinel extends AkBaseModel
 {
     public $Controller;
     public $CurrentUser;
     public $Session;
+    public $locale_namespace = 'admin_plugin';
+    
 
     public function init(&$Controller) {
         $this->Controller = $Controller;
@@ -52,7 +54,7 @@ class Sentinel
         $result =  $UserInstance->authenticate(@$login['login'], @$login['password']);
         if(!$result){
             if(!empty($this->Controller->params['ak_login'])){
-                $this->Controller->flash['error'] = Ak::t('Invalid user name or password, please try again', null, 'account');
+                $this->Controller->flash['error'] = $this->t('Invalid user name or password, please try again');
             }
             $this->redirectToSignInScreen();
         }
@@ -106,7 +108,7 @@ class Sentinel
 
     public function authenticateUsingHttpBasic() {
         $settings = Ak::getSettings('admin');
-        return $this->Controller->_authenticateOrRequestWithHttpBasic(Ak::t($settings['http_auth_realm'], null, 'account'), new User());
+        return $this->Controller->_authenticateOrRequestWithHttpBasic($this->t($settings['http_auth_realm']), new User());
     }
 
     public function hasUserOnSession() {

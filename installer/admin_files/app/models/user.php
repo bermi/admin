@@ -6,6 +6,8 @@ defined('AK_DEFAULT_ADMIN_SETTINGS')|| define('AK_DEFAULT_ADMIN_SETTINGS', 'admi
 class User extends ActiveRecord
 {
     public $habtm = array('roles' => array('unique'=>true, 'foreign_key'=>'user_id'));
+
+    public $locale_namespace = 'admin_plugin';
     
     private $__initial_attributes = array();
     private $__requires_password_confirmation = true;
@@ -106,7 +108,7 @@ class User extends ActiveRecord
     public function validatesExistanceOfOriginalPasswordWhenUpdatingLogin() {
         if($this->hasAttributeBeenModified('login')){
             if(!$this->isValidPassword($this->get('password'), true, true)){
-                $this->addError('login', $this->t('can\' be modified unless you provide a valid password.'));
+                $this->addError('login', $this->t('can\'t be modified unless you provide a valid password.'));
             }else{
                 $this->set('password_confirmation', $this->get('password'));
             }
@@ -395,7 +397,7 @@ class User extends ActiveRecord
     static function getCurrentUser() {
         $User = Ak::getStaticVar('CurrentUser');
         if (empty($User)) {
-            trigger_error(Ak::t('Current user has not been set yet.'), E_USER_ERROR);
+            trigger_error($this->t('Current user has not been set yet.'), E_USER_ERROR);
         }
         return $User;
     }

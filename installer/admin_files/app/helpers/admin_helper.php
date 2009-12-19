@@ -2,6 +2,8 @@
 
 class AdminHelper extends AkActionViewHelper
 {
+    public $locale_namespace = 'admin_plugin';
+
     public function admin_menu() {
         return $this->_renderMenu('admin');
     }

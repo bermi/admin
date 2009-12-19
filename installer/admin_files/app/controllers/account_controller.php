@@ -3,6 +3,7 @@
 class AccountController extends ApplicationController
 {
     public $models = array('User','Sentinel');
+    public $locale_namespace = 'admin_plugin';
 
     public function __construct() {
         $this->settings = Ak::getSettings('admin');

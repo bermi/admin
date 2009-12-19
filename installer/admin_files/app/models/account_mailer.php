@@ -4,6 +4,7 @@ class AccountMailer extends AkActionMailer
 {
     public $_password_reset_url;
     public $delivery_method = 'smtp';
+    public $locale_namespace = 'admin_plugin';
 
     public function __construct() {
         $this->_settings = Ak::getSettings('admin');

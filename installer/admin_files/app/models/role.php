@@ -7,6 +7,7 @@ class Role extends ActiveRecord
     'permissions',
     );
     public $acts_as = 'nested_set';
+    public $locale_namespace = 'admin_plugin';
 
     public function validate() {
         $this->validatesPresenceOf('name');

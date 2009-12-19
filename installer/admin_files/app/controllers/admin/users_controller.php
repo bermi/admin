@@ -77,7 +77,7 @@ class Admin_UsersController extends AdminController
         $this->_protectUserFromBeingModified();
         if ($this->Request->isPost() && !empty($this->params['user'])){
             $this->User->setAttributes($this->params['user']);
-            empty($this->params['roles']) ? $this->User->addError('Role', Ak::t('Please select at least one role for this user.')) : null;
+            empty($this->params['roles']) ? $this->User->addError('Role', $this->t('Please select at least one role for this user.')) : null;
 
             if($this->User->save()){
 
