@@ -107,7 +107,7 @@ class AdminPluginInstaller extends AkInstaller
         $key = empty($key) ? Ak::uuid() : $key;
         $yml_path = realpath(AkConfig::getDir('app').DS.'../config').DS.'admin.yml';
         $admin_yml = file_get_contents($yml_path);
-        $admin_yml = preg_replace('/token_key: ([\w\d-,\. ]+)/i', 'token_key: '.$key, $admin_yml);
+        $admin_yml = preg_replace('/token_key: SECRET/', 'token_key: '.$key, $admin_yml);
         file_put_contents($yml_path, $admin_yml);
     }
     
