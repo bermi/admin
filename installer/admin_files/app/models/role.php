@@ -72,8 +72,8 @@ class Role extends ActiveRecord
         $Permissions = empty($this->permissions) ? array() : $this->permissions;
         $ChildrenRoles = $this->nested_set->getChildren();
         if(!empty($ChildrenRoles)){
-            foreach (array_keys($ChildrenRoles) as $k){
-                $Permissions = array_merge($Permissions, $ChildrenRoles[$k]->getPermissions());
+            foreach ($ChildrenRoles as $Role){
+                $Permissions = array_merge($Permissions, $Role->getPermissions());
             }
         }
         return $Permissions;
