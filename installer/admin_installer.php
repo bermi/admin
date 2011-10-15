@@ -31,7 +31,7 @@ class AdminInstaller extends AkInstaller
     public function modifyRoutes() {
         $preffix = '/'.trim($this->promptUserVar('Admin url preffix',  array('default'=>'/admin/')), "\t /").'/';
         $path = AK_CONFIG_DIR.DS.'routes.php';
-        Ak::file_put_contents($path, str_replace('<?php',"<?php \n\n \$Map->connect('$preffix:controller/:action/:id', array('controller' => 'dashboard', 'action' => 'index', 'module' => 'admin'));",Ak::file_get_contents($path)));
+        Ak::file_put_contents($path, str_replace('<?php',"<?php \n\n \$Map->connect('$prefix:controller/:action/:id', array('controller' => 'dashboard', 'action' => 'index', 'module' => 'admin'));",Ak::file_get_contents($path)));
 
     }
 
@@ -46,7 +46,7 @@ class AdminInstaller extends AkInstaller
         $url_suffix = AkInstaller::promptUserVar(
         'The admin plugin comes with some fancy CSS background images.
 
-Your aplication might be accesible at /myapp, 
+Your application might be accessible at /myapp, 
 and your images folder might be at /myapp/public
 
 Insert the relative path where your images folder is

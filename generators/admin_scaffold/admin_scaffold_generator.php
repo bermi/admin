@@ -23,7 +23,7 @@ require_once(AK_GENERATORS_DIR.DS.'scaffold'.DS.'scaffold_generator.php');
 class AdminScaffoldGenerator extends  ScaffoldGenerator
 {
     public $sintags = true;
-    //var $module_preffix = 'admin';
+    //var $module_prefix = 'admin';
     public $generators_dir = AK_ADMIN_PLUGIN_GENERATORS_DIR;
 
     public function cast() {
