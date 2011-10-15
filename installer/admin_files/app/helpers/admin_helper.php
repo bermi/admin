@@ -61,7 +61,7 @@ class AdminHelper extends AkActionViewHelper
         }
         $options_file = $this->_getMenuOptionsFile($type);
         if(!file_exists($options_file)){
-            Ak::file_put_contents(AK_CONFIG_DIR.DS.$options_file, Ak::convert('array', 'yaml', array('default'=>$menu_options)));
+            AkFileSystem::file_put_contents(AK_CONFIG_DIR.DS.$options_file, Ak::convert('array', 'yaml', array('default'=>$menu_options)));
         }
         return $menu_options;
     }

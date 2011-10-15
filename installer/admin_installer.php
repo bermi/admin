@@ -31,7 +31,7 @@ class AdminInstaller extends AkInstaller
     public function modifyRoutes() {
         $prefix = '/'.trim(AkConsole::promptUserVar('Admin url prefix',  array('default'=>'/admin/')), "\t /").'/';
         $path = AK_CONFIG_DIR.DS.'routes.php';
-        Ak::file_put_contents($path, str_replace('<?php',"<?php \n\n \$Map->connect('$prefix:controller/:action/:id', array('controller' => 'dashboard', 'action' => 'index', 'module' => 'admin'));",Ak::file_get_contents($path)));
+        AkFileSystem::file_put_contents($path, str_replace('<?php',"<?php \n\n \$Map->connect('$prefix:controller/:action/:id', array('controller' => 'dashboard', 'action' => 'index', 'module' => 'admin'));",AkFileSystem::file_get_contents($path)));
 
     }
 
@@ -58,8 +58,8 @@ so you don\'t need to manually edit the CSS files', array('default'=>'/'));
             $stylesheets = array('admin/admin','admin/menu');
             foreach ($stylesheets as $stylesheet) {
                 $filename = AK_PUBLIC_DIR.DS.'stylesheets'.DS.$stylesheet.'.css';
-                $relativized_css = preg_replace("/url\((\'|\")?\/images/","url($1/$url_suffix/images", @Ak::file_get_contents($filename));
-                !empty($relativized_css) && @Ak::file_put_contents($filename, $relativized_css);
+                $relativized_css = preg_replace("/url\((\'|\")?\/images/","url($1/$url_suffix/images", @AkFileSystem::file_get_contents($filename));
+                !empty($relativized_css) && @AkFileSystem::file_put_contents($filename, $relativized_css);
             }
         }
     }
