@@ -52,7 +52,7 @@ class AdminHelper extends AkActionViewHelper
     }
 
     public function _getMenuOptionsForControllersInModule($type = 'admin') {
-        $controllers = (Ak::dir(AK_CONTROLLERS_DIR.DS.$this->_controller->getModuleName(), array('dirs'=>false)));
+        $controllers = (AkFileSystem::dir(AK_CONTROLLERS_DIR.DS.$this->_controller->getModuleName(), array('dirs'=>false)));
         sort($controllers);
         $menu_options = array();
         foreach ($controllers as $controller){
