@@ -1,10 +1,4 @@
-WARNING!
----------
-USE ONLY ON FRESH AKELOS INSTALLATIONS AS IT MIGHT OVERRIDE YOUR EXISTING FILES!!!
-
-
-Admin Plugin
-===================================
+# Akelos Admin Plugin
 
 The Admin plugin assists you on creating a basic admin with [RBAC](http://csrc.nist.gov/rbac/) (permission, role and user management).
 
@@ -15,8 +9,7 @@ As Akelos itself the Admin plugin is based on conventions for building navigatio
 The user permission interface is heavily inspired by [Drupal](http://drupal.org/ "drupal.org | Community plumbing").
 
 
-Installation
---------------------------------
+## Installation
 
     ./script/plugin install https://github.com/bermi/admin.git
 
@@ -25,27 +18,23 @@ You will be prompted for the URL path and master account details.
 After installing you can visit http://yourhost.com/admin (by default admin)
 
 
-
-Admin preferences
---------------------------------
+## Admin preferences
 
 Your admin preferences are located at:
 
     ./config/admin.yml
 
 
-Admin Scaffold generator
---------------------------------
+## Admin Scaffold generator
 
 You can use the admin scaffold generator exactly like the scaffold generator.
 
-    ./script/generate admin_scaffold
+    ./makelos generate admin_scaffold
 
 It will generate controllers inside the the admin module, views that match the admin conventions, and helpers with permission check-points in order filter the links to show.
 
 
-RBAC (Role Based Access Control)
-----------------------------------
+## RBAC (Role Based Access Control)
 
 Keeping track of who can do what on your admin is plain simple. Permissions are grouped/scoped into Extensions for clarity.
 
@@ -77,8 +66,7 @@ and select individual actions if any using
 If you're logged as Root, new permissions found in your code will be added automatically to your permission pool. Just like with multilingual strings on Akelos.
 
 
-The menu system
------------------
+## The menu system
 
 In order to benefit from the menu building system and automated privileges your controllers in the admin module must extend AdminController, which is located at
 
@@ -116,14 +104,12 @@ To completely override the admin menu you must use **var $_admin_menu_options = 
 
 
 
-The User Model
-----------------
+## The User Model
 
 The admin provides a "basic" user model. It's quite limited on purpose, so you can evolve the basic model to suit your needs.
 
 
-Future
---------
+## Future
 
 Not a full featured automated admin. You'll have to custom code your intranets, but this might speed up the process.
 
