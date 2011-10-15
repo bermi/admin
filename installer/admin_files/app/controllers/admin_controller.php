@@ -11,18 +11,23 @@ class AdminController extends ApplicationController
     public $controller_menu_options = array();
 
     public function __construct() {
-        $this->beforeFilter('load_settings');
-        $this->beforeFilter('authenticate');
-        !empty($this->protected_actions) ? $this->beforeFilter('protectAction') : null;
-        !empty($this->protect_all_actions) ? $this->beforeFilter(array('protectAllActions' => array('except'=>array('action_privileges_error', 'login')))) : null;
+
+        $this->beforeFilter('_loadSettings');
+        $this->beforeFilter('_authenticate');
+        !empty($this->protected_actions) ? $this->beforeFilter('_protectAction') : null;
+        !empty($this->protect_all_actions) ? $this->beforeFilter(array('_protectAllActions' => array('except'=>array('action_privileges_error', 'login')))) : null;
     }
 
-    public function load_settings() {
+
+    /**
+    * Filters. Public methods but underscored to they cant be triggered directly via URL calls
+    */
+    public function _loadSettings() {
         $this->admin_settings = Ak::getSettings('admin');
         return true;
     }
 
-    public function authenticate() {
+    public function _authenticate() {
         $Sentinel = new Sentinel();
         $Sentinel->init($this);
         return $Sentinel->authenticate();
@@ -34,7 +39,7 @@ class AdminController extends ApplicationController
         exit;
     }
 
-    public function protectAction() {
+    public function _protectAction() {
         $protected_actions = Ak::toArray($this->protected_actions);
         $action_name = $this->getActionName();
         if(in_array($action_name, $protected_actions) && !$this->CurrentUser->can($action_name.' action', 'Admin::'.$this->getControllerName())){
@@ -42,7 +47,7 @@ class AdminController extends ApplicationController
         }
     }
 
-    public function protectAllActions() {
+    public function _protectAllActions() {
         if(!$this->CurrentUser->can($this->getActionName().' action', 'Admin::'.$this->getControllerName())){
             $this->redirectTo(array('action'=>'action_privileges_error', 'controller'=>'dashboard'));
         }
