@@ -9,7 +9,6 @@ class Sentinel extends AkBaseModel
     public $CurrentUser;
     public $Session;
     public $locale_namespace = 'admin_plugin';
-    
 
     public function init(&$Controller) {
         $this->Controller = $Controller;
@@ -20,8 +19,12 @@ class Sentinel extends AkBaseModel
         $restore = false;
         $this->saveOriginalRequest();
         if(!$User = $this->getUserFromSession()){
-            if($User = $this->getAuthenticatedUser()){
+            try{
+                $User = $this->getAuthenticatedUser();
                 $restore = true;
+            } catch(RecordNotFoundException $e) {
+                // User not found
+                $User = false;
             }
         }
         if($User){
@@ -32,8 +35,6 @@ class Sentinel extends AkBaseModel
         }
         return $User;
     }
-
-
 
     public function getAuthenticatedUser() {
         return $this->{$this->getAuthenticationMethod()}();
@@ -51,8 +52,9 @@ class Sentinel extends AkBaseModel
     public function authenticateUsingPostedVars() {
         $UserInstance = new User();
         $login = @$this->Controller->params['ak_login'];
-        $result =  $UserInstance->authenticate(@$login['login'], @$login['password']);
-        if(!$result){
+        try{
+            $result = $UserInstance->authenticate(@$login['login'], @$login['password']);
+        } catch(RecordNotFoundException $e){
             if(!empty($this->Controller->params['ak_login'])){
                 $this->Controller->flash['error'] = $this->t('Invalid user name or password, please try again');
             }
