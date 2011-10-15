@@ -40,9 +40,9 @@ class AdminPluginInstaller extends AkInstaller
 
         if(AK_ENVIRONMENT != 'testing' && empty($this->root_details)){
             $this->root_details = array(
-                'login' => $this->promptUserVar('Master account login.',  array('default'=>'admin')),
-                'email' => $this->promptUserVar('Master account email.',  array('default'=>'root@example.com')),
-                'password' => $this->promptUserVar('Root password.', array('default'=>'admin')),
+                'login' => AkConsole::promptUserVar('Master account login.',  array('default'=>'admin')),
+                'email' => AkConsole::promptUserVar('Master account email.',  array('default'=>'root@example.com')),
+                'password' => AkConsole::promptUserVar('Root password.', array('default'=>'admin')),
             );
         }
 
