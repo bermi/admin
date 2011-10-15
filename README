@@ -18,7 +18,7 @@ The user permission interface is heavily inspired by [Drupal](http://drupal.org/
 Installation
 --------------------------------
 
-    ./script/plugin install admin
+    ./script/plugin install https://github.com/bermi/admin.git
 
 You will be prompted for the URL path and master account details.
 
