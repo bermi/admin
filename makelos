@@ -5,29 +5,13 @@ define('MAKELOS_STANDALONE', true);
 // define('AK_BASE_DIR', '/path/to/an/akelos/app');
 
 defined('DS') || define('DS', DIRECTORY_SEPARATOR);
-
-if(!defined('AK_BASE_DIR')){
-    $base_dir = realpath(dirname(__FILE__).str_repeat(DS.'..', 5));
-    if(!is_dir($base_dir.'test'.DS.'shared')){
-        $akelos_version = trim(@`akelos -v`);
-        if(version_compare($akelos_version, '1.0', '>=')){
-            $base_dir = trim(@`akelos --base_dir`);
-        }
-    }
-    
-    define('AK_BASE_DIR', $base_dir);
-    $makelos_file = AK_BASE_DIR.DS.'vendor'.DS.'akelos'.DS.'makelos'.DS.'makelos.php';
-    if(!file_exists($makelos_file)){
-        die("Could not find Akelos base path. Please edit ".__FILE__."\n");
-    }
-}
-
-defined('AK_FRAMEWORK_DIR')     || define('AK_FRAMEWORK_DIR',       AK_BASE_DIR.DS.'vendor'.DS.'akelos');
+define('AK_BASE_DIR', $_SERVER['PWD']);
+defined('AK_FRAMEWORK_DIR') || define('AK_FRAMEWORK_DIR', AK_BASE_DIR.DS.'vendor'.DS.'akelos');
 define('MAKELOS_BASE_DIR', dirname(__FILE__));
 defined('AK_TEST_DIR') || define('AK_TEST_DIR', MAKELOS_BASE_DIR.DS.'test');
 define('AK_TESTING_NAMESPACE', 'plugins');
 
 $GLOBALS['argv'][] = '--component=plugins';
 
-include AK_FRAMEWORK_DIR.DS.'makelos'.DS.'makelos.php';
+include AK_FRAMEWORK_DIR.DS.'akelos_utils'.DS.'makelos'.DS.'makelos.php';
 
