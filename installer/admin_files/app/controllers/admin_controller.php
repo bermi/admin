@@ -12,7 +12,7 @@ class AdminController extends ApplicationController
 
     public function __construct() {
 
-        $this->beforeFilter('_loadSettings');
+        $this->beforeFilter('_loadAdminSettings');
         $this->beforeFilter('_authenticate');
         !empty($this->protected_actions) ? $this->beforeFilter('_protectAction') : null;
         !empty($this->protect_all_actions) ? $this->beforeFilter(array('_protectAllActions' => array('except'=>array('action_privileges_error', 'login')))) : null;
@@ -22,7 +22,7 @@ class AdminController extends ApplicationController
     /**
     * Filters. Public methods but underscored to they cant be triggered directly via URL calls
     */
-    public function _loadSettings() {
+    public function _loadAdminSettings() {
         $this->admin_settings = Ak::getSettings('admin');
         return true;
     }
