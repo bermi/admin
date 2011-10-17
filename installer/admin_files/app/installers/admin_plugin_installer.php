@@ -98,7 +98,8 @@ class AdminPluginInstaller extends AkInstaller
         'email'=>$this->root_details['email'], 
         'password'=> $this->root_details['password'], 
         'password_confirmation'=>$this->root_details['password']));
-        $ApplicationOwner->role->add($Role->findFirstBy('name', 'Application owner'));
+        $Owner = $Role->findFirstBy('name', 'Application owner');
+        $ApplicationOwner->role->add($Owner);
         $ApplicationOwner->save();
     }
     
